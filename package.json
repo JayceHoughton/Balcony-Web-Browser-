@@ -1,0 +1,22 @@
+{
+  "name": "softwareenginneringproject",
+  "version": "1.0.0",
+  "description": "Software Engineering Project",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JayceHoughton/SoftwareEnginneringProject.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JayceHoughton/SoftwareEnginneringProject/issues"
+  },
+  "homepage": "https://github.com/JayceHoughton/SoftwareEnginneringProject#readme",
+  "devDependencies": {
+    "electron": "^5.0.1"
+  }
+}
