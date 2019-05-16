@@ -1,7 +1,8 @@
-const { app, BrowserWindow} = require('electron')
+const { app, BrowserWindow, BrowserView} = require('electron')
 
 let win
 let ses
+let view
 
 function createWindow () {
   win = new BrowserWindow({ width: 1500, height: 800, webPreferences: { webviewTag: true}})
@@ -15,8 +16,10 @@ function createWindow () {
   win.on('closed', () => {
     win = null
   })
-
-  ses = win.webContents.session
+  view = new BrowserView()
+  win.setBrowserView(view)
+  view.setBounds({ x: 0, y: 0, width: 500, height: 500 })
+  view.webContents.loadURL('https://google.com/')
 }
 
 app.on('ready', createWindow)
@@ -34,7 +37,7 @@ app.on('window-all-closed', () => {
   //Clears all browsing data and cookies. Temporary function until we have another way
   //to handle the user wanting to clear cookies themselves. For now clears all cookies and data
   //on window close
-  ses.clearStorageData([], function (data) {})
+  //ses.clearCache(function(){})
   if (process.platform !== 'darwin') {
     app.quit()
   }
