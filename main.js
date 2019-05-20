@@ -31,7 +31,6 @@ app.on('ready', createWindow)
 
 //Responds to the makeWindow signal from functions. Calls createBrowserView
 ipcMain.on('makeWindow', (event, arg) => {
-  console.log(arg)
   createBrowserView(arg.x, arg.y, arg.width, arg.height, arg.url)
 })
 

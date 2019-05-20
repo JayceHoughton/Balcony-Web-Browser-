@@ -6,7 +6,3 @@ const {ipcRenderer} = require('electron')
 function createNewPanel(x, y, width, height, url) {
     ipcRenderer.send('makeWindow', {x: x, y: y, width: width, height: height, url: url})
 }
-
-createNewPanel(0, 0, 500, 500, 'https://google.com/')
-
-createNewPanel(500, 0, 500, 500, 'https://youtube.com/')
