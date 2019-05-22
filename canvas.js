@@ -1,3 +1,7 @@
+
+//Panels array that saves state of all panels
+let panels = []
+
 //Canvas and UI drawing
 
 canvas = document.getElementById("theCanvas")
@@ -5,9 +9,17 @@ ctx = canvas.getContext("2d")
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+//When we resize the window the canvas is cleared, so we need to redraw all panels
 window.onresize = function() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+    for(i = 0; i < panels.length; i++)
+    {
+        ctx.beginPath()
+        ctx.rect(panels[i].x, panels[i].y, panels[i].width, panels[i].height)
+        ctx.stroke()
+        ctx.closePath()
+    }
 }
 
 //Function to get the position of the mouse on the Canvas
@@ -27,13 +39,25 @@ function drawMouseRect(canvas, event) {
     ctx.stroke()
 }
 
+//Function to draw the rectangle made by the user dragging the mouse
+//Clears and restores canvas each time it is called
+//Redraws all finished rectangles which are stored in the panels array
+//Returns all information about the current rectangle
 function drawDragRect(canvas, event, leftCorner) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    for(i = 0; i < panels.length; i++)
+    {
+        ctx.beginPath()
+        ctx.rect(panels[i].x, panels[i].y, panels[i].width, panels[i].height)
+        ctx.stroke()
+        ctx.closePath()
+    }
     rightCorner = getCanvasMousePosition(canvas, event)
     ctx.beginPath()
     ctx.rect(leftCorner.x, leftCorner.y, rightCorner.x - leftCorner.x, rightCorner.y - leftCorner.y)
-    console.log(rightCorner.x - leftCorner.x)
     ctx.stroke()
     ctx.closePath()
+
     return {
         x: leftCorner.x,
         y: leftCorner.y,
@@ -49,14 +73,12 @@ function drawDragRect(canvas, event, leftCorner) {
 }*/
 
 document.getElementById("theCanvas").onmousedown = function() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
 
     //Sets the leftcorner of the rectangle to the current mouse position
     leftCorner = getCanvasMousePosition(canvas, event)
 
     //Function to be called by the event listener. Repeatedly calls drawDragRect to redraw rectangle over and over again
     function drawRect() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height)
         drawDragRect(canvas, event, leftCorner)
     }
 
@@ -71,6 +93,14 @@ document.getElementById("theCanvas").onmousedown = function() {
 
         //Gets the dimensions of the final panel
         panelDims = drawDragRect(canvas, event, leftCorner)
-        createNewPanel(panelDims.x, panelDims.y, panelDims.width, panelDims.height, 'https://www.youtube.com/')
+        //createNewPanel(panelDims.x, panelDims.y, panelDims.width, panelDims.height, 'https://www.youtube.com/')
+
+        //Pushes the finalized panel to the panel array
+        panels.push({
+            x: panelDims.x,
+            y: panelDims.y,
+            width: panelDims.width,
+            height: panelDims.height
+        })
     }
 }
