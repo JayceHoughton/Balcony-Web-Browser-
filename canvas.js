@@ -137,8 +137,13 @@ function whileDrawing() {
         }
     }
 
+    function holdCursor() {
+        changeCursor("crosshair")
+    }
+
     //Adds lister to mouse movement. Makes it so that drawRect is called repeatedly for dynamic rectangle drawing
     document.addEventListener('mousemove', drawRect)
+    document.addEventListener('mousedown', holdCursor)
 
     //When the mouse is released the final rectangle is drawn
     function endDrawing() {
@@ -146,6 +151,7 @@ function whileDrawing() {
         //Removes the event listener form mouse movement to stop the rectangle from being repeatedly drawn
         document.removeEventListener('mousemove', drawRect)
         document.removeEventListener('mouseup', endDrawing)
+        document.removeEventListener('mousedown', holdCursor)
         
 
         //We will only draw the panel if its drawn from top corner to bottom corner
