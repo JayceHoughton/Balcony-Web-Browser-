@@ -3,6 +3,8 @@ const { app, BrowserWindow, BrowserView, session, ipcMain} = require('electron')
 let win
 let ses
 let view
+let windowPos = 0
+let viewArr = []
 
 function createWindow () {
   win = new BrowserWindow({ width: 1500, height: 800, fullscreenable: false, webPreferences: { webviewTag: true, nodeIntegration: true}})
@@ -21,10 +23,15 @@ function createWindow () {
 //Creates a BrowserView using infromation provided from renderer signal
 function createBrowserView(x, y, width, height, url) {
   view = new BrowserView()
+  viewArr.push(view)
   win.addBrowserView(view)
   view.setBounds({ x: x, y: y, width: width, height: height })
   //view.setAutoResize({width: false, height: true})
   view.webContents.loadURL(url)
+}
+
+function resizeBrowserView(x, y, width, height, viewNum) {
+  viewArr[viewNum].setBounds({ x: x, y: y, width: width, height: height })
 }
 
 app.on('ready', createWindow)
@@ -32,6 +39,13 @@ app.on('ready', createWindow)
 //Responds to the makeWindow signal from functions. Calls createBrowserView
 ipcMain.on('makeWindow', (event, arg) => {
   createBrowserView(arg.x, arg.y, arg.width, arg.height, arg.url)
+  //event.reply('winPos', windowPos)
+  event.returnValue = windowPos
+  windowPos++
+})
+
+ipcMain.on('resize', (event, arg) => {
+  resizeBrowserView(arg.x, arg.y, arg.width, arg.height, arg.viewNum)
 })
 
 app.on('window-all-closed', () => {
@@ -39,7 +53,7 @@ app.on('window-all-closed', () => {
   session.defaultSession.cookies.get({}, function(err, cookies) {
     for(i = 0; i < cookies.length; i++)
     {
-      console.log(cookies[i])
+      //console.log(cookies[i])
     }
   })
 
