@@ -129,6 +129,7 @@ function whileDrawing() {
 
     //Function to be called by the event listener. Repeatedly calls drawDragRect to redraw rectangle over and over again
     function drawRect() {
+        changeCursor("crosshair")
         coordinates = getCanvasMousePosition(canvas, event)
         if(coordinates.x > leftCorner.x && coordinates.y > leftCorner.y)
         {
@@ -185,6 +186,9 @@ function whileDrawing() {
 //Adding the new while drawing listener to the client
 document.addEventListener('mousedown', whileDrawing)
 
+function changeCursor(newCursor) {
+    canvas.style.cursor = newCursor
+}
 
 //Function to stop the whileDrawing event listener from firing if we are over a corner
 function dontDraw() {
@@ -197,11 +201,24 @@ function dontDraw() {
         {
             if(coordinates.y > (panels[i].height + panels[i].y - 5) && coordinates.y < (panels[i].height + panels[i].y + 5))
             {
+                changeCursor("nw-resize")
                 document.removeEventListener('mousedown', whileDrawing)
+                break
+            }
+        }
+        //Loop to check if the cursor is in the top left for moving
+        else if(coordinates.x > panels[i].x - 5 && coordinates.x < panels[i].x + 5)
+        {
+            if(coordinates.y > panels[i].y - 5 && coordinates.y < panels[i].y + 5)
+            {
+                changeCursor("move")
+                document.removeEventListener('mousedown', whileDrawing)
+                break
             }
         }
         else
         {
+            changeCursor("default")
             document.addEventListener('mousedown', whileDrawing)
         }
     }
@@ -221,7 +238,6 @@ function resizePanel() {
         {
             if(coordinates.y > (panels[i].height + panels[i].y - 5) && coordinates.y < (panels[i].height + panels[i].y + 5))
             {
-
                 //removing the whileDrawing listener and adding the resize rectangle listener
                 //so they dont conflict
                 document.removeEventListener('mousedown', whileDrawing)
@@ -229,6 +245,7 @@ function resizePanel() {
 
                 //Function to resize the rectangle, made to be called by the event listener
                 function resizeRect() {
+                    changeCursor("nw-resize")
                     coordinates = getCanvasMousePosition(canvas, event)
                     if(coordinates.x > panels[i].x && coordinates.y > panels[i].y)
                     {
@@ -265,16 +282,25 @@ function movePanel() {
             if(coordinates.y > panels[i].y - 5 && coordinates.y < panels[i].y + 5)
             {
                 function moveRect() {
+                    changeCursor("move")
                     coordinates = getCanvasMousePosition(canvas, event)
                     moveRectangle(canvas, event, i)
+                }
+
+                //Maintains the move cursor while moving
+                //Needed due to some lag possibilities
+                function holdCursor() {
+                    changeCursor("move")
                 }
 
                 //removing the whileDrawing listener and adding the move rectangle listener
                 //so they dont conflict
                 document.removeEventListener('mousedown', whileDrawing)
                 document.addEventListener('mousemove', moveRect)
+                document.addEventListener('mousedown', holdCursor)
 
                 function stopMove() {
+                    document.removeEventListener('mousedown', holdCursor)
                     document.removeEventListener('mousemove', moveRect)
                     document.addEventListener('mousedown', whileDrawing)
                 }
