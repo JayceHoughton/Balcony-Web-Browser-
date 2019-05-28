@@ -387,7 +387,7 @@ function movePanel() {
                             notInside = false
                             break
                         }
-                        else if(coordinates.x !== panels[i].x && coordinates.y < panels[i].y + panels[i].height && coordinates.y < panels[i].x + panels[i].width && (panels[currPos].y + panels[currPos].height > panels[i].y && panels[currPos].x + panels[currPos].width > panels[i].x))
+                        else if(coordinates.x !== panels[i].x && coordinates.y < panels[i].y + panels[i].height && coordinates.x < panels[i].x + panels[i].width && (panels[currPos].y + panels[currPos].height > panels[i].y && panels[currPos].x + panels[currPos].width > panels[i].x))
                         {
                             notInside = false
                             break
@@ -423,7 +423,6 @@ function movePanel() {
                     document.removeEventListener('mouseup', stopMove)
                 }
                 document.addEventListener('mouseup', stopMove)
-
             }
         }
     }
