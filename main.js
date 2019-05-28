@@ -7,7 +7,7 @@ let windowPos = 0
 let viewArr = []
 
 function createWindow () {
-  win = new BrowserWindow({ width: 1500, height: 800, fullscreenable: false, webPreferences: { webviewTag: true, nodeIntegration: true}})
+  win = new BrowserWindow({ width: 1500, height: 800, fullscreenable: false, webPreferences: { webviewTag: true, nodeIntegration: true, plugins: true}})
 
   win.setMenu(null)
 
@@ -22,7 +22,7 @@ function createWindow () {
 
 //Creates a BrowserView using infromation provided from renderer signal
 function createBrowserView(x, y, width, height, url) {
-  view = new BrowserView()
+  view = new BrowserView({webPreferences: {plugins: true}})
   viewArr.push(view)
   win.addBrowserView(view)
   view.setBounds({ x: x, y: y, width: width, height: height })
