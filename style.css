@@ -4,10 +4,51 @@ html, body
     width: 100%;
     margin: 0;
     overflow-x: hidden;
+	padding: 0px;
 }
 
 webview {
     max-height: 100%;
     max-width: 100%;
     object-fit: contain;
+}
+
+#title-bar {
+
+ -webkit-app-region: drag;
+
+ height: 24px; 
+
+ background-color: darkviolet;
+
+ padding: none;
+
+ margin: 0px;
+ 
+ color: #ADADAD;
+ 
+ font-family: sans-serif;
+
+}
+
+#title {
+
+ position: fixed;
+
+ top: 0px;
+
+ left: 6px; 
+
+}
+
+#title-bar-btns {
+
+ -webkit-app-region: no-drag;
+
+ position: fixed;
+
+ top: 0px;
+
+ right: 6px;
+
 }

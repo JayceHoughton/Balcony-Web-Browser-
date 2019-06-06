@@ -1,5 +1,5 @@
 //got most of this from https://blog.jscrambler.com/building-a-web-browser-using-electron/
-//doesn't work properly yet, still needs some modifications
+//doesn't work with ours, but can be used as an example
 
 var ById = function (id) {  
     return document.getElementById(id);

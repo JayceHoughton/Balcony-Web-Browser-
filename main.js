@@ -7,7 +7,7 @@ let windowPos = 0
 let viewArr = []
 
 function createWindow () {
-  win = new BrowserWindow({ width: 1500, height: 800, fullscreenable: false, webPreferences: { webviewTag: true, nodeIntegration: true, plugins: true}})
+  win = new BrowserWindow({ width: 1500, height: 800, frame: false, fullscreenable: false, webPreferences: { webviewTag: true, nodeIntegration: true, plugins: true}})
 
   win.setMenu(null)
 
