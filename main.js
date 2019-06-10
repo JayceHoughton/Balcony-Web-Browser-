@@ -20,7 +20,7 @@ function createWindow () {
   })
 }
 
-//Creates a BrowserView using infromation provided from renderer signal
+//Creates a BrowserView using information provided from renderer signal
 function createBrowserView(x, y, width, height, url) {
   view = new BrowserView({webPreferences: {plugins: true}})
   viewArr.push(view)
