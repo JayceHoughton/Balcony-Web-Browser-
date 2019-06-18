@@ -23,8 +23,14 @@
         document.getElementById("close-btn").addEventListener("click", function (e) {
           const window = remote.getCurrentWindow();
           window.close();
-        }); 
-      }; 
+        });
+		
+	/*	document.getElementById("menu-btn").addEventListener("click", function (e) {
+			document.getElementById("menu-btn").classList.toggle("show");
+		});
+      };*/
+	  
+	  
       
       document.onreadystatechange = function () {
         if (document.readyState == "complete") {
@@ -32,3 +38,16 @@
         }
       };
 })();
+/*
+window.onclick = function(e) {
+		if (!event.target.matches('.menu-btn")){
+				var dropdown = document.getElementsByClassName("dropdown-content");
+				var i;
+				for (i = 0; i < dropdowns.length; i++) {
+					var openDropdown = dropdowns[i];
+					if (openDropdown.classList.contains('show')) {
+							openDropdown.classList.remove('show');
+					}
+				}
+		}
+}*/
