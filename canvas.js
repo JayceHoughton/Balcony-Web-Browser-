@@ -200,7 +200,8 @@ function whileDrawing() {
         {
             //Gets the dimensions of the final panel
             panelDims = drawDragRect(canvas, event, leftCorner)
-            viewNum = createNewPanel(panelDims.x, panelDims.y, panelDims.width, panelDims.height, 'https://www.google.com')
+            viewNum = createNewPanel(panelDims.x, panelDims.y, panelDims.width, panelDims.height)
+            updatePanelWebsite('https://www.google.com', viewNum)
 
             //Pushes the finalized panel to the panel array
             panels.push({

@@ -21,13 +21,13 @@ function createWindow () {
 }
 
 //Creates a BrowserView using infromation provided from renderer signal
-function createBrowserView(x, y, width, height, url) {
+function createBrowserView(x, y, width, height) {
   view = new BrowserView({webPreferences: {plugins: true}})
   viewArr.push(view)
   win.addBrowserView(view)
   view.setBounds({ x: x, y: y, width: width, height: height })
   //view.setAutoResize({width: false, height: true})
-  view.webContents.loadURL(url)
+  //view.webContents.loadURL(url)
 }
 
 //Function to resize the passed Browser View
@@ -40,11 +40,15 @@ function deleteBrowserView(viewNum) {
   viewArr[viewNum].destroy()
 }
 
+function updateBrowserView(url, viewNum) {
+  viewArr[viewNum].webContents.loadURL(url)
+}
+
 app.on('ready', createWindow)
 
 //Responds to the makeWindow signal from functions. Calls createBrowserView
 ipcMain.on('makeWindow', (event, arg) => {
-  createBrowserView(arg.x, arg.y, arg.width, arg.height, arg.url)
+  createBrowserView(arg.x, arg.y, arg.width, arg.height)
   //event.reply('winPos', windowPos)
   event.returnValue = windowPos
   windowPos++
@@ -56,6 +60,10 @@ ipcMain.on('resize', (event, arg) => {
 
 ipcMain.on('delete', (event, arg) => {
   deleteBrowserView(arg)
+})
+
+ipcMain.on('update', (event, arg) => {
+  updateBrowserView(arg.url, arg.viewNum)
 })
 
 app.on('window-all-closed', () => {
