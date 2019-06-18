@@ -33,6 +33,8 @@ function getCanvasMousePosition(canvas, event) {
     }
 }
 
+
+//Function that makes it so you drag and draw the rectangle
 function drawMouseRect(canvas, event) {
     coordinates = getCanvasMousePosition(canvas, event)
     ctx.rect(coordinates.x, coordinates.y, 100, 100)
@@ -98,6 +100,25 @@ function moveRectangle(canvas, event, pos) {
 
     //Call to panel function that moves the browser view
     changePanelDims(panels[pos].x, panels[pos].y, panels[pos].width, panels[pos].height, panels[pos].viewNum)
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    for(i = 0; i < panels.length; i++)
+    {
+        ctx.beginPath()
+        ctx.rect(panels[i].x, panels[i].y, panels[i].width, panels[i].height)
+        ctx.stroke()
+        ctx.closePath()
+    }
+}
+
+//Function to delete a rectangle as well as it's associated view
+function deleteRectangle(canvas, event, pos) {
+    //Call to delete panel function in functions.js
+    deletePanelDims(panels[pos].viewNum)
+
+
+    //Uses splice to remove element from array
+    panels.splice(pos, 1)
 
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     for(i = 0; i < panels.length; i++)
@@ -179,7 +200,7 @@ function whileDrawing() {
         {
             //Gets the dimensions of the final panel
             panelDims = drawDragRect(canvas, event, leftCorner)
-            viewNum = createNewPanel(panelDims.x, panelDims.y, panelDims.width, panelDims.height, 'https://www.youtube.com')
+            viewNum = createNewPanel(panelDims.x, panelDims.y, panelDims.width, panelDims.height, 'https://www.google.com')
 
             //Pushes the finalized panel to the panel array
             panels.push({
@@ -430,3 +451,32 @@ function movePanel() {
 
 //Adds a listener for the panel moving function
 document.addEventListener('mousedown', movePanel)
+
+function deletePanel() {
+    coordinates = getCanvasMousePosition(canvas, event)
+
+    //Loop to check if mouse position is in the top right corner of a panel
+    for(let i = 0; i < panels.length; i++)
+    {
+        if(coordinates.x > panels[i].x + panels[i].width - 5 && coordinates.x < panels[i].x + panels[i].width + 5)
+        {
+            if(coordinates.y > panels[i].y - 5 && coordinates.y < panels[i].y + 5)
+            {
+                console.log("ya")
+                let currPos = i
+                document.removeEventListener("mousedown", deletePanel)
+                function deleteThis() {
+                    console.log("yeet")
+                    deleteRectangle(canvas, event, currPos)
+                    document.removeEventListener("mouseup", deleteThis)
+                    document.addEventListener('mousedown', whileDrawing)
+                    document.addEventListener("mousedown", deletePanel)
+                }
+                document.addEventListener("mouseup", deleteThis)
+                document.removeEventListener('mousedown', whileDrawing)
+            }
+        }
+    }
+}
+
+document.addEventListener('mousedown', deletePanel)

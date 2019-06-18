@@ -30,8 +30,14 @@ function createBrowserView(x, y, width, height, url) {
   view.webContents.loadURL(url)
 }
 
+//Function to resize the passed Browser View
 function resizeBrowserView(x, y, width, height, viewNum) {
   viewArr[viewNum].setBounds({ x: x, y: y, width: width, height: height })
+}
+
+//Function to delete the passed Browser View
+function deleteBrowserView(viewNum) {
+  viewArr[viewNum].destroy()
 }
 
 app.on('ready', createWindow)
@@ -46,6 +52,10 @@ ipcMain.on('makeWindow', (event, arg) => {
 
 ipcMain.on('resize', (event, arg) => {
   resizeBrowserView(arg.x, arg.y, arg.width, arg.height, arg.viewNum)
+})
+
+ipcMain.on('delete', (event, arg) => {
+  deleteBrowserView(arg)
 })
 
 app.on('window-all-closed', () => {

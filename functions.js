@@ -10,3 +10,8 @@ function createNewPanel(x, y, width, height, url) {
 function changePanelDims(x, y, width, height, viewNum) {
     ipcRenderer.send('resize', {x: x, y: y, width: width, height: height, viewNum: viewNum})
 }
+
+//Function to signal main to delete the panel with the passed view number
+function deletePanelDims(viewNum) {
+    ipcRenderer.send('delete', viewNum)
+}
