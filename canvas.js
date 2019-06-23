@@ -1,6 +1,9 @@
+var fs = require('fs')
 
 //Panels array that saves state of all panels
-let panels = []
+savedData = fs.readFileSync('saveData.json')
+
+let panels = JSON.parse(savedData)
 
 //Canvas and UI drawing
 
@@ -119,6 +122,11 @@ function deleteRectangle(canvas, event, pos) {
 
     //Uses splice to remove element from array
     panels.splice(pos, 1)
+    for(i = 0; i < panels.length; i++)
+    {
+        panels[i].viewNum = i
+    }
+    fs.writeFile('saveData.json', JSON.stringify(panels), 'utf-8', () => {})
 
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     for(i = 0; i < panels.length; i++)
@@ -211,6 +219,7 @@ function whileDrawing() {
                 height: panelDims.height,
                 viewNum: viewNum
             })
+            fs.writeFile('saveData.json', JSON.stringify(panels), 'utf-8', () => {})
         }
         else
         {
@@ -344,6 +353,9 @@ function resizePanel() {
                             ctx.closePath()
                         }
                     }
+                    else {
+                        fs.writeFile('saveData.json', JSON.stringify(panels), 'utf-8', () => {})
+                    }
                     document.removeEventListener('mousemove', resizeRect)
                     document.addEventListener('mousedown', whileDrawing)
                     document.removeEventListener('mouseup', stopResize)
@@ -439,6 +451,9 @@ function movePanel() {
                             ctx.closePath()
                         }
                     }
+                    else {
+                        fs.writeFile('saveData.json', JSON.stringify(panels), 'utf-8', () => {})
+                    }
                     document.removeEventListener('mousedown', holdCursor)
                     document.removeEventListener('mousemove', moveRect)
                     document.addEventListener('mousedown', whileDrawing)
@@ -463,11 +478,9 @@ function deletePanel() {
         {
             if(coordinates.y > panels[i].y - 5 && coordinates.y < panels[i].y + 5)
             {
-                console.log("ya")
                 let currPos = i
                 document.removeEventListener("mousedown", deletePanel)
                 function deleteThis() {
-                    console.log("yeet")
                     deleteRectangle(canvas, event, currPos)
                     document.removeEventListener("mouseup", deleteThis)
                     document.addEventListener('mousedown', whileDrawing)
