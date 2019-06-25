@@ -34,17 +34,8 @@ webview {
 		color: black;
 }
 
-.topnav input[type=text] {
-  float: left;
-  padding: 6px;
-  border: none;
-  margin-top: 8px;
-  margin-right: 16px;
-  font-size: 17px;
-}
-
 @media screen and (max-width: 600px) {
-  .topnav input[type=text], .topnav a  {
+.topnav a  {
     float: none;
     display: block;
     text-align: left;
@@ -52,7 +43,3 @@ webview {
     margin: 0;
     padding: 14px;
   }
-  .topnav input[type=text] {
-    border: 1px solid #ccc;
-  }
-}

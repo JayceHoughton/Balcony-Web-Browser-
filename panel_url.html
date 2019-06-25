@@ -3,9 +3,22 @@
   <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="style2.css">
-    <title>Panel_Test</title>
+    <title>Welcome to Balcony</title>
   </head>
   <body id="body">
-      <p id="panel">Hola Senor</p>
+	  <div class = "topnav">
+		<a href = "help_page.html">Need Help?</a>
+		<input type = "text" id = "field" placeholder="enter URL or search term here...">
+		<button id="myBtn">Go</button>
+		
+		<script type="text/JavaScript">
+			document.getElementById("myBtn".addEventListener("click",function(){
+				var url = document.getElementById("field").value;
+				
+				window.open(url);
+			});
+		</script>
+	  </div>
+	   <p id="panel">Welcome to Balcony!</p>
   </body>
 </html>
