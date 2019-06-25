@@ -16,6 +16,22 @@ function deletePanelDims(viewNum) {
     ipcRenderer.send('delete', viewNum)
 }
 
+//Function to update the website contents of a Browserview
 function updatePanelWebsite(url, viewNum) {
     ipcRenderer.send('update', {url: url, viewNum: viewNum})
+}
+
+//Function to clear the panel view for other views
+function clearPanelView() {
+    ipcRenderer.send('clear')
+}
+
+//Function to restore the panel view
+function restorePanelView() {
+    ipcRenderer.send('restore')
+}
+
+//Function to set the panel number used when calling panelView
+function setPanelNumber(num) {
+    ipcRenderer.send('number', num)
 }

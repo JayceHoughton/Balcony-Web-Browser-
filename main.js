@@ -4,7 +4,12 @@ var fs = require('fs')
 let win
 let ses
 let view
+
+//Window Position is used to keep track of linking the Browser View to its corresponding Panel in canvas
 let windowPos = 0
+let panelNum = 0
+
+//Webpages and View Data are stored to JSON file for persistent storage
 webpages = fs.readFileSync('savedWebpages.json')
 viewData = fs.readFileSync('savedViewData.json')
 let savedViewData = JSON.parse(viewData)
@@ -20,15 +25,6 @@ function createWindow() {
 
   win.webContents.openDevTools()
 
-  for (i = 0; i < savedViewData.length; i++) {
-    view = new BrowserView({ webPreferences: { plugins: true } })
-    viewArr.push(view)
-    win.addBrowserView(view)
-    view.setBounds({ x: savedViewData[i].x, y: savedViewData[i].y, width: savedViewData[i].width, height: savedViewData[i].height })
-    view.webContents.loadURL(savedWebsites[i].url)
-    windowPos++
-  }
-
   win.on('closed', () => {
     win = null
   })
@@ -40,7 +36,7 @@ function createBrowserView(x, y, width, height) {
   viewArr.push(view)
   win.addBrowserView(view)
   view.setBounds({ x: x, y: y, width: width, height: height })
-  savedViewData.push({ x: x, y: y, width: width, height: height })
+  savedViewData[panelNum].push({ x: x, y: y, width: width, height: height })
   fs.writeFile('savedViewData.json', JSON.stringify(savedViewData), 'utf-8', () => { })
   //view.setAutoResize({width: false, height: true})
   //view.webContents.loadURL(url)
@@ -49,29 +45,62 @@ function createBrowserView(x, y, width, height) {
 //Function to resize the passed Browser View
 function resizeBrowserView(x, y, width, height, viewNum) {
   viewArr[viewNum].setBounds({ x: x, y: y, width: width, height: height })
-  savedViewData[viewNum].x = x
-  savedViewData[viewNum].y = y
-  savedViewData[viewNum].width = width
-  savedViewData[viewNum].height = height
+  savedViewData[panelNum][viewNum].x = x
+  savedViewData[panelNum][viewNum].y = y
+  savedViewData[panelNum][viewNum].width = width
+  savedViewData[panelNum][viewNum].height = height
 }
 
 //Function to delete the passed Browser View
 function deleteBrowserView(viewNum) {
   viewArr[viewNum].destroy()
   viewArr.splice(viewNum, 1)
-  savedViewData.splice(viewNum, 1)
-  savedWebsites.splice(viewNum, 1)
+  savedViewData[panelNum].splice(viewNum, 1)
+  savedWebsites[panelNum].splice(viewNum, 1)
   windowPos = 0
-  for(i = 0; i < savedWebsites.length; i++)
+  for(i = 0; i < savedWebsites[panelNum].length; i++)
   {
-    savedWebsites[i].viewNum = i
+    savedWebsites[panelNum][i].viewNum = i
     windowPos++
   }
 }
 
 function updateBrowserView(url, viewNum) {
   viewArr[viewNum].webContents.loadURL(url)
-  savedWebsites.push({ url: url, viewNum: viewNum })
+  savedWebsites[panelNum].push({ url: url, viewNum: viewNum })
+}
+
+function destroyViews() {
+  fs.writeFile('savedViewData.json', JSON.stringify(savedViewData), 'utf-8', () => { })
+  fs.writeFile('savedWebpages.json', JSON.stringify(savedWebsites), 'utf-8', () => { })
+  
+  for(i = 0; i < viewArr.length; i++)
+  {
+    viewArr[i].destroy()
+  }
+  viewArr.length = 0
+}
+
+function restoreViews() {
+  for (i = 0; i < savedViewData[panelNum].length; i++) {
+    view = new BrowserView({ webPreferences: { plugins: true } })
+    viewArr.push(view)
+    win.addBrowserView(view)
+    view.setBounds({ x: savedViewData[panelNum][i].x, y: savedViewData[panelNum][i].y, width: savedViewData[panelNum][i].width, height: savedViewData[panelNum][i].height })
+    view.webContents.loadURL(savedWebsites[panelNum][i].url)
+  }
+}
+
+function setPanelNum(num) {
+  panelNum = num
+  for (i = 0; i < savedViewData[panelNum].length; i++) {
+    view = new BrowserView({ webPreferences: { plugins: true } })
+    viewArr.push(view)
+    win.addBrowserView(view)
+    view.setBounds({ x: savedViewData[panelNum][i].x, y: savedViewData[panelNum][i].y, width: savedViewData[panelNum][i].width, height: savedViewData[panelNum][i].height })
+    view.webContents.loadURL(savedWebsites[panelNum][i].url)
+    windowPos++
+  }
 }
 
 app.on('ready', createWindow)
@@ -94,6 +123,18 @@ ipcMain.on('delete', (event, arg) => {
 
 ipcMain.on('update', (event, arg) => {
   updateBrowserView(arg.url, arg.viewNum)
+})
+
+ipcMain.on('clear', (event, arg) => {
+  destroyViews()
+})
+
+ipcMain.on('restore', (event, arg) => {
+  restoreViews()
+})
+
+ipcMain.on('number', (event, arg) => {
+  setPanelNum(arg)
 })
 
 app.on('window-all-closed', () => {
