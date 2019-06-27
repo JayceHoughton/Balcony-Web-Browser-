@@ -6,38 +6,11 @@
     <title>Test</title>
   </head>
   <body id="body">
-    <!-- <p id="panel">Drag and drop your mouse cursor to make a panel!</p> -->
-	
-	<!-- https://stackoverflow.com/questions/35876939/frameless-window-with-controls-in-electron-windows -->
-	<div id = "title-bar" style="background-color: purple">
-		<div id = "title">Balcony</div>
-		<div id = "title-bar-btns">
-			<button id = "min-btn">-</button>
-			<button id = "max-btn">+</button>
-			<button id = "close-btn">x</button>
-			<!-- <button id = "menu-btn" class = "dropdown-content">=</button>
-				<a href = "#">Options</a>
-				<a href = "#">Help</a>
-				<a href = "#">About Us</a> -->
-		</div>
-	</div>
-
     <canvas id="theCanvas"></canvas>
 
     <script src="panels.js"></script>
     <script src="canvas.js"></script>
     <script src="functions.js"></script>
-	<script src="default.js"></script>
-
-	
-	<!-- npm i electron-navigation from https://www.npmjs.com/package/electron-navigation -->
-	<!--<div id="nav-body-ctrls"></div>
-	<div id="nav-body-tabs"></div>
-	<div id="nav-body-views"></div>
-	
-	<script>
-		const enav = new (require('electron-navigation'))();
-	</script>-->
-	
+    <script src="runner.js"></script>
   </body>
 </html>

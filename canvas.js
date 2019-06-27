@@ -1,6 +1,10 @@
+var fs = require('fs')
 
 //Panels array that saves state of all panels
-let panels = []
+savedData = fs.readFileSync('saveData.json')
+
+let panels = JSON.parse(savedData)
+let whichPanel = 0
 
 //Canvas and UI drawing
 
@@ -9,17 +13,47 @@ ctx = canvas.getContext("2d")
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+function drawBorder() {
+    ctx.beginPath()
+    ctx.rect(0, 0, canvas.width, canvas.height)
+    ctx.stroke()
+    ctx.closePath()
+}
+
+function panelView(input) {
+    document.addEventListener('mousedown', whileDrawing)
+    document.addEventListener('mousemove', dontDraw)
+    document.addEventListener('mousedown', resizePanel)
+    document.addEventListener('mousedown', movePanel)
+    document.addEventListener('mousedown', deletePanel)
+    setPanelNumber(input)
+    whichPanel = input
+}
+
+function clearView() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    clearPanelView()
+    document.removeEventListener('mousedown', whileDrawing)
+    document.removeEventListener('mousemove', dontDraw)
+    document.removeEventListener('mousedown', resizePanel)
+    document.removeEventListener('mousedown', movePanel)
+    document.removeEventListener('mousedown', deletePanel)
+}
+
+//drawBorder()
+
 //When we resize the window the canvas is cleared, so we need to redraw all panels
 window.onresize = function() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    for(i = 0; i < panels.length; i++)
+    for(i = 0; i < panels[whichPanel].length; i++)
     {
         ctx.beginPath()
-        ctx.rect(panels[i].x, panels[i].y, panels[i].width, panels[i].height)
+        ctx.rect(panels[whichPanel][i].x, panels[whichPanel][i].y, panels[whichPanel][i].width, panels[whichPanel][i].height)
         ctx.stroke()
         ctx.closePath()
     }
+    //drawBorder()
 }
 
 //Function to get the position of the mouse on the Canvas
@@ -33,6 +67,8 @@ function getCanvasMousePosition(canvas, event) {
     }
 }
 
+
+//Function that makes it so you drag and draw the rectangle
 function drawMouseRect(canvas, event) {
     coordinates = getCanvasMousePosition(canvas, event)
     ctx.rect(coordinates.x, coordinates.y, 100, 100)
@@ -45,10 +81,10 @@ function drawMouseRect(canvas, event) {
 //Returns all information about the current rectangle
 function drawDragRect(canvas, event, leftCorner) {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
-    for(i = 0; i < panels.length; i++)
+    for(i = 0; i < panels[whichPanel].length; i++)
     {
         ctx.beginPath()
-        ctx.rect(panels[i].x, panels[i].y, panels[i].width, panels[i].height)
+        ctx.rect(panels[whichPanel][i].x, panels[whichPanel][i].y, panels[whichPanel][i].width, panels[whichPanel][i].height)
         ctx.stroke()
         ctx.closePath()
     }
@@ -72,17 +108,17 @@ function drawDragRect(canvas, event, leftCorner) {
 //It will then redraw the entire canvas
 function resizeRectangle(canvas, event, pos) {
     rightCorner = getCanvasMousePosition(canvas, event)
-    panels[pos].width = rightCorner.x - panels[pos].x
-    panels[pos].height = rightCorner.y - panels[pos].y
+    panels[whichPanel][pos].width = rightCorner.x - panels[whichPanel][pos].x
+    panels[whichPanel][pos].height = rightCorner.y - panels[whichPanel][pos].y
 
     //Call to panel function that resizes browser view
-    changePanelDims(panels[pos].x, panels[pos].y, panels[pos].width, panels[pos].height, panels[pos].viewNum)
+    changePanelDims(panels[whichPanel][pos].x, panels[whichPanel][pos].y, panels[whichPanel][pos].width, panels[whichPanel][pos].height, panels[whichPanel][pos].viewNum)
 
     ctx.clearRect(0, 0, canvas.width, canvas.height)
-    for(i = 0; i < panels.length; i++)
+    for(i = 0; i < panels[whichPanel].length; i++)
     {
         ctx.beginPath()
-        ctx.rect(panels[i].x, panels[i].y, panels[i].width, panels[i].height)
+        ctx.rect(panels[whichPanel][i].x, panels[whichPanel][i].y, panels[whichPanel][i].width, panels[whichPanel][i].height)
         ctx.stroke()
         ctx.closePath()
     }
@@ -93,17 +129,41 @@ function resizeRectangle(canvas, event, pos) {
 //Must update whole canvas when this happens
 function moveRectangle(canvas, event, pos) {
     leftCorner = getCanvasMousePosition(canvas, event)
-    panels[pos].x = leftCorner.x
-    panels[pos].y = leftCorner.y
+    panels[whichPanel][pos].x = leftCorner.x
+    panels[whichPanel][pos].y = leftCorner.y
 
     //Call to panel function that moves the browser view
-    changePanelDims(panels[pos].x, panels[pos].y, panels[pos].width, panels[pos].height, panels[pos].viewNum)
+    changePanelDims(panels[whichPanel][pos].x, panels[whichPanel][pos].y, panels[whichPanel][pos].width, panels[whichPanel][pos].height, panels[whichPanel][pos].viewNum)
 
     ctx.clearRect(0, 0, canvas.width, canvas.height)
-    for(i = 0; i < panels.length; i++)
+    for(i = 0; i < panels[whichPanel].length; i++)
     {
         ctx.beginPath()
-        ctx.rect(panels[i].x, panels[i].y, panels[i].width, panels[i].height)
+        ctx.rect(panels[whichPanel][i].x, panels[whichPanel][i].y, panels[whichPanel][i].width, panels[whichPanel][i].height)
+        ctx.stroke()
+        ctx.closePath()
+    }
+}
+
+//Function to delete a rectangle as well as it's associated view
+function deleteRectangle(canvas, event, pos) {
+    //Call to delete panel function in functions.js
+    deletePanelDims(panels[whichPanel][pos].viewNum)
+
+
+    //Uses splice to remove element from array
+    panels[whichPanel].splice(pos, 1)
+    for(i = 0; i < panels[whichPanel].length; i++)
+    {
+        panels[whichPanel][i].viewNum = i
+    }
+    fs.writeFile('saveData.json', JSON.stringify(panels), 'utf-8', () => {})
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    for(i = 0; i < panels[whichPanel].length; i++)
+    {
+        ctx.beginPath()
+        ctx.rect(panels[whichPanel][i].x, panels[whichPanel][i].y, panels[whichPanel][i].width, panels[whichPanel][i].height)
         ctx.stroke()
         ctx.closePath()
     }
@@ -116,11 +176,11 @@ function whileDrawing() {
 
     //This loops checks to make sure the mouse isnt inside of one of the existing panels
     //We do not want to draw new rectangles inside of existing panels
-    for(i = 0; i < panels.length; i++)
+    for(i = 0; i < panels[whichPanel].length; i++)
     {
-        if(leftCorner.x > panels[i].x && leftCorner.x < (panels[i].width + panels[i].x))
+        if(leftCorner.x > panels[whichPanel][i].x && leftCorner.x < (panels[whichPanel][i].width + panels[whichPanel][i].x))
         {
-            if(leftCorner.y > panels[i].y && leftCorner.y < (panels[i].height + panels[i].y))
+            if(leftCorner.y > panels[whichPanel][i].y && leftCorner.y < (panels[whichPanel][i].height + panels[whichPanel][i].y))
             {
                 return
             }
@@ -161,14 +221,14 @@ function whileDrawing() {
         //Below for loop checks to make sure the box being drawn does not overlap any other boxes
         notInside = true
 
-        for(let i = 0; i < panels.length; i++)
+        for(let i = 0; i < panels[whichPanel].length; i++)
         {
-            if(coordinates.x > panels[i].x && coordinates.x < panels[i].x + panels[i].width && coordinates.y > panels[i].y && coordinates.y < panels[i].y + panels[i].height)
+            if(coordinates.x > panels[whichPanel][i].x && coordinates.x < panels[whichPanel][i].x + panels[whichPanel][i].width && coordinates.y > panels[whichPanel][i].y && coordinates.y < panels[whichPanel][i].y + panels[whichPanel][i].height)
             {
                 notInside = false
                 break
             }
-            else if(leftCorner.y < panels[i].y + panels[i].height && leftCorner.x < panels[i].x + panels[i].width && (coordinates.y > panels[i].y && coordinates.x > panels[i].x))
+            else if(leftCorner.y < panels[whichPanel][i].y + panels[whichPanel][i].height && leftCorner.x < panels[whichPanel][i].x + panels[whichPanel][i].width && (coordinates.y > panels[whichPanel][i].y && coordinates.x > panels[whichPanel][i].x))
             {
                 notInside = false
                 break
@@ -179,25 +239,27 @@ function whileDrawing() {
         {
             //Gets the dimensions of the final panel
             panelDims = drawDragRect(canvas, event, leftCorner)
-            viewNum = createNewPanel(panelDims.x, panelDims.y, panelDims.width, panelDims.height, 'https://www.youtube.com')
+            viewNum = createNewPanel(panelDims.x, panelDims.y, panelDims.width, panelDims.height)
+            updatePanelWebsite('https://www.google.com', viewNum)
 
             //Pushes the finalized panel to the panel array
-            panels.push({
+            panels[whichPanel].push({
                 x: panelDims.x,
                 y: panelDims.y,
                 width: panelDims.width,
                 height: panelDims.height,
                 viewNum: viewNum
             })
+            fs.writeFile('saveData.json', JSON.stringify(panels), 'utf-8', () => {})
         }
         else
         {
             //Get rid of the box drawn while drawing
             ctx.clearRect(0, 0, canvas.width, canvas.height)
-            for(i = 0; i < panels.length; i++)
+            for(i = 0; i < panels[whichPanel].length; i++)
             {
                 ctx.beginPath()
-                ctx.rect(panels[i].x, panels[i].y, panels[i].width, panels[i].height)
+                ctx.rect(panels[whichPanel][i].x, panels[whichPanel][i].y, panels[whichPanel][i].width, panels[whichPanel][i].height)
                 ctx.stroke()
                 ctx.closePath()
             }
@@ -208,7 +270,7 @@ function whileDrawing() {
 }
 
 //Adding the new while drawing listener to the client
-document.addEventListener('mousedown', whileDrawing)
+//document.addEventListener('mousedown', whileDrawing)
 
 function changeCursor(newCursor) {
     canvas.style.cursor = newCursor
@@ -219,11 +281,11 @@ function dontDraw() {
     coordinates = getCanvasMousePosition(canvas, event)
 
     //For loop to loop through panels and check if the mouse position is at the bottom right corner of one of the panels
-    for(let i = 0; i < panels.length; i++)
+    for(let i = 0; i < panels[whichPanel].length; i++)
     {
-        if(coordinates.x > (panels[i].width + panels[i].x - 5) && coordinates.x < (panels[i].width + panels[i].x + 5))
+        if(coordinates.x > (panels[whichPanel][i].width + panels[whichPanel][i].x - 5) && coordinates.x < (panels[whichPanel][i].width + panels[whichPanel][i].x + 5))
         {
-            if(coordinates.y > (panels[i].height + panels[i].y - 5) && coordinates.y < (panels[i].height + panels[i].y + 5))
+            if(coordinates.y > (panels[whichPanel][i].height + panels[whichPanel][i].y - 5) && coordinates.y < (panels[whichPanel][i].height + panels[whichPanel][i].y + 5))
             {
                 changeCursor("nw-resize")
                 document.removeEventListener('mousedown', whileDrawing)
@@ -231,9 +293,9 @@ function dontDraw() {
             }
         }
         //Loop to check if the cursor is in the top left for moving
-        else if(coordinates.x > panels[i].x - 5 && coordinates.x < panels[i].x + 5)
+        else if(coordinates.x > panels[whichPanel][i].x - 5 && coordinates.x < panels[whichPanel][i].x + 5)
         {
-            if(coordinates.y > panels[i].y - 5 && coordinates.y < panels[i].y + 5)
+            if(coordinates.y > panels[whichPanel][i].y - 5 && coordinates.y < panels[whichPanel][i].y + 5)
             {
                 changeCursor("move")
                 document.removeEventListener('mousedown', whileDrawing)
@@ -248,7 +310,7 @@ function dontDraw() {
     }
 }
 
-document.addEventListener('mousemove', dontDraw)
+//document.addEventListener('mousemove', dontDraw)
 
 
 //Function to resize panels that have already been made
@@ -256,18 +318,18 @@ function resizePanel() {
     coordinates = getCanvasMousePosition(canvas, event)
 
     //For loop to loop through panels and check if the mouse position is at the bottom right corner of one of the panels
-    for(let i = 0; i < panels.length; i++)
+    for(let i = 0; i < panels[whichPanel].length; i++)
     {
-        if(coordinates.x > (panels[i].width + panels[i].x - 5) && coordinates.x < (panels[i].width + panels[i].x + 5))
+        if(coordinates.x > (panels[whichPanel][i].width + panels[whichPanel][i].x - 5) && coordinates.x < (panels[whichPanel][i].width + panels[whichPanel][i].x + 5))
         {
-            if(coordinates.y > (panels[i].height + panels[i].y - 5) && coordinates.y < (panels[i].height + panels[i].y + 5))
+            if(coordinates.y > (panels[whichPanel][i].height + panels[whichPanel][i].y - 5) && coordinates.y < (panels[whichPanel][i].height + panels[whichPanel][i].y + 5))
             {
                 let currPos = i
                 let OGPosition = {
-                    x: panels[currPos].x,
-                    y: panels[currPos].y,
-                    width: panels[currPos].width,
-                    height: panels[currPos].height
+                    x: panels[whichPanel][currPos].x,
+                    y: panels[whichPanel][currPos].y,
+                    width: panels[whichPanel][currPos].width,
+                    height: panels[whichPanel][currPos].height
                 }
                 
                 //removing the whileDrawing listener and adding the resize rectangle listener
@@ -279,7 +341,7 @@ function resizePanel() {
                 function resizeRect() {
                     changeCursor("nw-resize")
                     coordinates = getCanvasMousePosition(canvas, event)
-                    if(coordinates.x > panels[i].x && coordinates.y > panels[i].y)
+                    if(coordinates.x > panels[whichPanel][i].x && coordinates.y > panels[whichPanel][i].y)
                     {
                         resizeRectangle(canvas, event, i)
                     }
@@ -290,14 +352,14 @@ function resizePanel() {
                 function stopResize() {
                     coordinates = getCanvasMousePosition(canvas, event)
                     let notInside = true
-                    for(let i = 0; i < panels.length; i++)
+                    for(let i = 0; i < panels[whichPanel].length; i++)
                     {
-                        if(coordinates.x > panels[i].x && coordinates.x < panels[i].x + panels[i].width && coordinates.y > panels[i].y && coordinates.y < panels[i].y + panels[i].height)
+                        if(coordinates.x > panels[whichPanel][i].x && coordinates.x < panels[whichPanel][i].x + panels[whichPanel][i].width && coordinates.y > panels[whichPanel][i].y && coordinates.y < panels[whichPanel][i].y + panels[whichPanel][i].height)
                         {
                             notInside = false
                             break
                         }
-                        else if(OGPosition.x !== panels[i].x && OGPosition.y < panels[i].y + panels[i].height && OGPosition.x < panels[i].x + panels[i].width && (coordinates.y > panels[i].y && coordinates.x > panels[i].x))
+                        else if(OGPosition.x !== panels[whichPanel][i].x && OGPosition.y < panels[whichPanel][i].y + panels[whichPanel][i].height && OGPosition.x < panels[whichPanel][i].x + panels[whichPanel][i].width && (coordinates.y > panels[whichPanel][i].y && coordinates.x > panels[whichPanel][i].x))
                         {
                             notInside = false
                             break
@@ -306,21 +368,24 @@ function resizePanel() {
 
                     if(notInside == false)
                     {
-                        panels[currPos].x = OGPosition.x
-                        panels[currPos].y = OGPosition.y
-                        panels[currPos].width = OGPosition.width
-                        panels[currPos].height = OGPosition.height
+                        panels[whichPanel][currPos].x = OGPosition.x
+                        panels[whichPanel][currPos].y = OGPosition.y
+                        panels[whichPanel][currPos].width = OGPosition.width
+                        panels[whichPanel][currPos].height = OGPosition.height
                         //Call to panel function that resizes browser view
-                        changePanelDims(panels[currPos].x, panels[currPos].y, panels[currPos].width, panels[currPos].height, panels[currPos].viewNum)
+                        changePanelDims(panels[whichPanel][currPos].x, panels[whichPanel][currPos].y, panels[whichPanel][currPos].width, panels[whichPanel][currPos].height, panels[whichPanel][currPos].viewNum)
 
                         ctx.clearRect(0, 0, canvas.width, canvas.height)
-                        for(j = 0; j < panels.length; j++)
+                        for(j = 0; j < panels[whichPanel].length; j++)
                         {
                             ctx.beginPath()
-                            ctx.rect(panels[j].x, panels[j].y, panels[j].width, panels[j].height)
+                            ctx.rect(panels[whichPanel][j].x, panels[whichPanel][j].y, panels[whichPanel][j].width, panels[whichPanel][j].height)
                             ctx.stroke()
                             ctx.closePath()
                         }
+                    }
+                    else {
+                        fs.writeFile('saveData.json', JSON.stringify(panels), 'utf-8', () => {})
                     }
                     document.removeEventListener('mousemove', resizeRect)
                     document.addEventListener('mousedown', whileDrawing)
@@ -333,7 +398,7 @@ function resizePanel() {
 }
 
 //Adding the new resize listener to the client
-document.addEventListener('mousedown', resizePanel)
+//document.addEventListener('mousedown', resizePanel)
 
 //Function to move panels to a new position
 //Called by an event listener
@@ -343,19 +408,19 @@ function movePanel() {
     coordinates = getCanvasMousePosition(canvas, event)
 
     //For loop to loop through and check if the mouse is in the upper left corner and the user wants to move the panel
-    for(let i = 0; i < panels.length; i++)
+    for(let i = 0; i < panels[whichPanel].length; i++)
     {
-        if(coordinates.x > panels[i].x - 5 && coordinates.x < panels[i].x + 5)
+        if(coordinates.x > panels[whichPanel][i].x - 5 && coordinates.x < panels[whichPanel][i].x + 5)
         {
-            if(coordinates.y > panels[i].y - 5 && coordinates.y < panels[i].y + 5)
+            if(coordinates.y > panels[whichPanel][i].y - 5 && coordinates.y < panels[whichPanel][i].y + 5)
             {
 
                 let currPos = i
                 let OGPosition = {
-                    x: panels[currPos].x,
-                    y: panels[currPos].y,
-                    width: panels[currPos].width,
-                    height: panels[currPos].height
+                    x: panels[whichPanel][currPos].x,
+                    y: panels[whichPanel][currPos].y,
+                    width: panels[whichPanel][currPos].width,
+                    height: panels[whichPanel][currPos].height
                 }
 
                 function moveRect() {
@@ -380,14 +445,14 @@ function movePanel() {
                     //Prevents panels from being placed on to of one another
                     coordinates = getCanvasMousePosition(canvas, event)
                     let notInside = true
-                    for(let i = 0; i < panels.length; i++)
+                    for(let i = 0; i < panels[whichPanel].length; i++)
                     {
-                        if(coordinates.x > panels[i].x && coordinates.x < panels[i].x + panels[i].width && coordinates.y > panels[i].y && coordinates.y < panels[i].y + panels[i].height)
+                        if(coordinates.x > panels[whichPanel][i].x && coordinates.x < panels[whichPanel][i].x + panels[whichPanel][i].width && coordinates.y > panels[whichPanel][i].y && coordinates.y < panels[whichPanel][i].y + panels[whichPanel][i].height)
                         {
                             notInside = false
                             break
                         }
-                        else if(coordinates.x !== panels[i].x && coordinates.y < panels[i].y + panels[i].height && coordinates.x < panels[i].x + panels[i].width && (panels[currPos].y + panels[currPos].height > panels[i].y && panels[currPos].x + panels[currPos].width > panels[i].x))
+                        else if(coordinates.x !== panels[whichPanel][i].x && coordinates.y < panels[whichPanel][i].y + panels[whichPanel][i].height && coordinates.x < panels[whichPanel][i].x + panels[whichPanel][i].width && (panels[whichPanel][currPos].y + panels[whichPanel][currPos].height > panels[whichPanel][i].y && panels[whichPanel][currPos].x + panels[whichPanel][currPos].width > panels[whichPanel][i].x))
                         {
                             notInside = false
                             break
@@ -395,27 +460,30 @@ function movePanel() {
                     }
                     if(notInside == false)
                     {
-                        panels[currPos].x = OGPosition.x
-                        panels[currPos].y = OGPosition.y
-                        panels[currPos].width = OGPosition.width
-                        panels[currPos].height = OGPosition.height
+                        panels[whichPanel][currPos].x = OGPosition.x
+                        panels[whichPanel][currPos].y = OGPosition.y
+                        panels[whichPanel][currPos].width = OGPosition.width
+                        panels[whichPanel][currPos].height = OGPosition.height
                         //Call to panel function that resizes browser view
                         //This is called too times. Its really janky, but changePanelDims is sometimes inconsisent with actually moving the Browserview
                         //You dont notice this when moving the panel since its called so many times
                         //Calling this twice seems to be enough, but might be safer to call it like 3-4 times
                         //There is probably a more consistent way to ensure that the BrowserView is moved
                         //Jank can be ironed out later
-                        changePanelDims(panels[currPos].x, panels[currPos].y, panels[currPos].width, panels[currPos].height, panels[currPos].viewNum)
-                        changePanelDims(panels[currPos].x, panels[currPos].y, panels[currPos].width, panels[currPos].height, panels[currPos].viewNum)
+                        changePanelDims(panels[whichPanel][currPos].x, panels[whichPanel][currPos].y, panels[whichPanel][currPos].width, panels[whichPanel][currPos].height, panels[whichPanel][currPos].viewNum)
+                        changePanelDims(panels[whichPanel][currPos].x, panels[whichPanel][currPos].y, panels[whichPanel][currPos].width, panels[whichPanel][currPos].height, panels[whichPanel][currPos].viewNum)
 
                         ctx.clearRect(0, 0, canvas.width, canvas.height)
-                        for(j = 0; j < panels.length; j++)
+                        for(j = 0; j < panels[whichPanel].length; j++)
                         {
                             ctx.beginPath()
-                            ctx.rect(panels[j].x, panels[j].y, panels[j].width, panels[j].height)
+                            ctx.rect(panels[whichPanel][j].x, panels[whichPanel][j].y, panels[whichPanel][j].width, panels[whichPanel][j].height)
                             ctx.stroke()
                             ctx.closePath()
                         }
+                    }
+                    else {
+                        fs.writeFile('saveData.json', JSON.stringify(panels), 'utf-8', () => {})
                     }
                     document.removeEventListener('mousedown', holdCursor)
                     document.removeEventListener('mousemove', moveRect)
@@ -429,4 +497,31 @@ function movePanel() {
 }
 
 //Adds a listener for the panel moving function
-document.addEventListener('mousedown', movePanel)
+//document.addEventListener('mousedown', movePanel)
+
+function deletePanel() {
+    coordinates = getCanvasMousePosition(canvas, event)
+
+    //Loop to check if mouse position is in the top right corner of a panel
+    for(let i = 0; i < panels[whichPanel].length; i++)
+    {
+        if(coordinates.x > panels[whichPanel][i].x + panels[whichPanel][i].width - 5 && coordinates.x < panels[whichPanel][i].x + panels[whichPanel][i].width + 5)
+        {
+            if(coordinates.y > panels[whichPanel][i].y - 5 && coordinates.y < panels[whichPanel][i].y + 5)
+            {
+                let currPos = i
+                document.removeEventListener("mousedown", deletePanel)
+                function deleteThis() {
+                    deleteRectangle(canvas, event, currPos)
+                    document.removeEventListener("mouseup", deleteThis)
+                    document.addEventListener('mousedown', whileDrawing)
+                    document.addEventListener("mousedown", deletePanel)
+                }
+                document.addEventListener("mouseup", deleteThis)
+                document.removeEventListener('mousedown', whileDrawing)
+            }
+        }
+    }
+}
+
+//document.addEventListener('mousedown', deletePanel)
