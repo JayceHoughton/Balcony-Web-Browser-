@@ -24,7 +24,25 @@ function createBrowserView(x, y, width, height, url) {
   win.addBrowserView(view)
   view.setBounds({ x: x, y: y, width: width, height: height })
   //view.setAutoResize({width: false, height: true})
+<<<<<<< Updated upstream
   view.webContents.loadURL(url)
+=======
+  //view.webcontents.loadURL(url);
+}
+
+//Function to resize the passed Browser View
+function resizeBrowserView(x, y, width, height, viewNum) {
+  viewArr[viewNum].setBounds({ x: x, y: y, width: width, height: height })
+}
+
+//Function to delete the passed Browser View
+function deleteBrowserView(viewNum) {
+  viewArr[viewNum].destroy()
+}
+
+function updateBrowserView(url, viewNum) {
+  viewArr[viewNum].webContents.loadURL(url)
+>>>>>>> Stashed changes
 }
 
 app.on('ready', createWindow)
