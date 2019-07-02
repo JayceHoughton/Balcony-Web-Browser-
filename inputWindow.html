@@ -1,23 +1,39 @@
 <html>
+    <link rel = "stylesheet" href = "inputStyle.css">
     <head>
-        <title>Panel</title>
+        <title>Panel View</title>
     </head>
     <body>
-        <form id="form1">
-            Website:<input type="text" id="webst" name="name"/>
-        </form>
-        <button onclick="newTestFunction()">Submit</button>  
 
-        <p id="demo"></p>
-      </body>
+        <div class = "backgroundImage">
+            <div class = "input">
+                <form id = form1>
+                    <input type = "text" id = "webst" name = "name">
+                    <input type = "button" value = "Lets Go!" onclick = "goToWebsite()">
+                </form>
+            </div>
+        </div>
+    </body>
+    
     <script>
-        const electron = require('electron');
-        const {ipcRenderer} = electron;
- 
-        function newTestFunction() {
+        function goToWebsite() {
             var x = document.getElementById("form1");
             var y = x.elements["name"].value;
-            window.location.href = y;        
-        }
+            var h = "https://"
+            var i = "https://www."
+            var j = ".com"
+
+            if(!y.includes(i) && !y.includes(j))
+                y = i + y + j;
+            else if(!y.includes(h) && y.includes(j))
+                y = h + y;
+
+            window.location.href = y;
+        } 
+
     </script>
+
+
+
+
 </html>

@@ -1,0 +1,48 @@
+html,body {
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    color: orange;
+    text-align : center;
+}
+
+.backgroundImage {
+    background-image : url("https://wallpapercave.com/wp/wp2247348.jpg");
+    height : 100%;
+    background-position : center;
+    background-repeat : no-repeat;
+    background-size : cover;
+}
+
+.input {
+    position : absolute;
+    left : 0;
+    top : 50%;
+    width : 100%;
+    text-align : center;
+    color : #000;
+}
+
+input[type = text] {
+    border-radius : 10px;
+    height : 30px;
+    border : none;
+    background-color :  #1BADE2;
+    color : black;
+}
+
+input[type = button], input[type = submit] {
+    border : 200px solid red;
+    border-radius : 10px;
+    height : 30px;
+    background-color : #1BADE2;
+    border : none;
+    color : black;
+}
+
+input[type = text]:focus {
+    border : 2px solid rgb(0, 0, 0);
+    outline : none;
+}
