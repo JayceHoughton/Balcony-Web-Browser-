@@ -37,7 +37,6 @@ function createBrowserView(x, y, width, height) {
   win.addBrowserView(view)
   view.setBounds({ x: x, y: y, width: width, height: height })
   savedViewData[panelNum].push({ x: x, y: y, width: width, height: height })
-  fs.writeFile('savedViewData.json', JSON.stringify(savedViewData), 'utf-8', () => { })
   //view.setAutoResize({width: false, height: true})
   //view.webContents.loadURL(url)
 }
@@ -74,11 +73,12 @@ function destroyViews() {
   fs.writeFile('savedViewData.json', JSON.stringify(savedViewData), 'utf-8', () => { })
   fs.writeFile('savedWebpages.json', JSON.stringify(savedWebsites), 'utf-8', () => { })
   
-  for(i = 0; i < viewArr.length; i++)
+  for(let i = 0; i < viewArr.length; i++)
   {
     viewArr[i].destroy()
   }
   viewArr.length = 0
+  windowPos = 0
 }
 
 function restoreViews() {
@@ -92,6 +92,11 @@ function restoreViews() {
 }
 
 function setPanelNum(num) {
+  /*for(i = 0; i < viewArr.length; i++)
+  {
+    viewArr[i].destroy()
+  }
+  viewArr.length = 0*/
   panelNum = num
   for (i = 0; i < savedViewData[panelNum].length; i++) {
     view = new BrowserView({ webPreferences: { plugins: true } })
