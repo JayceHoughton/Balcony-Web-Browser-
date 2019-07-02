@@ -64,21 +64,28 @@ function deleteBrowserView(viewNum) {
   }
 }
 
-function updateBrowserView(url, viewNum) {
+function setBrowserView(url, viewNum) {
   viewArr[viewNum].webContents.loadURL(url)
   savedWebsites[panelNum].push({ url: url, viewNum: viewNum })
 }
 
+function updateBrowserView(url, viewNum) {
+  //viewArr[viewNum].webContents.loadURL(url)
+  savedWebsites[panelNum][viewNum].url = url
+}
+
 function destroyViews() {
-  fs.writeFile('savedViewData.json', JSON.stringify(savedViewData), 'utf-8', () => { })
-  fs.writeFile('savedWebpages.json', JSON.stringify(savedWebsites), 'utf-8', () => { })
   
   for(let i = 0; i < viewArr.length; i++)
   {
+    updateBrowserView(viewArr[i].webContents.getURL(), i)
     viewArr[i].destroy()
   }
   viewArr.length = 0
   windowPos = 0
+
+  fs.writeFile('savedViewData.json', JSON.stringify(savedViewData), 'utf-8', () => { })
+  fs.writeFile('savedWebpages.json', JSON.stringify(savedWebsites), 'utf-8', () => { })
 }
 
 function restoreViews() {
@@ -126,8 +133,8 @@ ipcMain.on('delete', (event, arg) => {
   deleteBrowserView(arg)
 })
 
-ipcMain.on('update', (event, arg) => {
-  updateBrowserView(arg.url, arg.viewNum)
+ipcMain.on('set', (event, arg) => {
+  setBrowserView(arg.url, arg.viewNum)
 })
 
 ipcMain.on('clear', (event, arg) => {
@@ -142,7 +149,15 @@ ipcMain.on('number', (event, arg) => {
   setPanelNum(arg)
 })
 
+ipcMain.on('update', (event, arg) => {
+  updateBrowserView(arg.url, arg.viewNum)
+})
+
 app.on('window-all-closed', () => {
+  for(let i = 0; i < viewArr.length; i++)
+  {
+    updateBrowserView(viewArr[i].webContents.getURL(), i)
+  }
   fs.writeFile('savedViewData.json', JSON.stringify(savedViewData), 'utf-8', () => { })
   fs.writeFile('savedWebpages.json', JSON.stringify(savedWebsites), 'utf-8', () => { })
   //Uncomment if you want to see the names of all the cookies

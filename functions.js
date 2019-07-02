@@ -1,4 +1,6 @@
-const {ipcRenderer} = require('electron')
+const {ipcRenderer, ipcMain, BrowserWindow} = require('electron')
+const url = require('url');
+const path = require('path');
 
 
 //Function to create new Panels. Takes X and Y positions, Width, Height, and URL. Uses ipcRenderer to signal the main.js file
@@ -17,6 +19,10 @@ function deletePanelDims(viewNum) {
 }
 
 //Function to update the website contents of a Browserview
+function setPanelWebsite(url, viewNum) {
+    ipcRenderer.send('set', {url: url, viewNum: viewNum})
+}
+
 function updatePanelWebsite(url, viewNum) {
     ipcRenderer.send('update', {url: url, viewNum: viewNum})
 }
@@ -34,4 +40,10 @@ function restorePanelView() {
 //Function to set the panel number used when calling panelView
 function setPanelNumber(num) {
     ipcRenderer.send('number', num)
+}
+
+//Function to load input html file 
+function takeInput(viewNum) {
+    var urL = url.format({pathname: path.join(__dirname, 'inputWindow.html'), protocol: 'file:', slashes: true});
+    setPanelWebsite(urL, viewNum)
 }

@@ -1,0 +1,23 @@
+<html>
+    <head>
+        <title>Panel</title>
+    </head>
+    <body>
+        <form id="form1">
+            Website:<input type="text" id="webst" name="name"/>
+        </form>
+        <button onclick="newTestFunction()">Submit</button>  
+
+        <p id="demo"></p>
+      </body>
+    <script>
+        const electron = require('electron');
+        const {ipcRenderer} = electron;
+ 
+        function newTestFunction() {
+            var x = document.getElementById("form1");
+            var y = x.elements["name"].value;
+            window.location.href = y;        
+        }
+    </script>
+</html>
