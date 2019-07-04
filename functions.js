@@ -5,7 +5,7 @@ const path = require('path');
 
 //Function to create new Panels. Takes X and Y positions, Width, Height, and URL. Uses ipcRenderer to signal the main.js file
 //to run the createBrowserView function which takes these parameters. x, y, width, height are integers, url is a string.
-function createNewPanel(x, y, width, height, url) {
+function createNewPanel(x, y, width, height) {
     return ipcRenderer.sendSync('makeWindow', {x: x, y: y, width: width, height: height})
 }
 
@@ -40,6 +40,14 @@ function restorePanelView() {
 //Function to set the panel number used when calling panelView
 function setPanelNumber(num) {
     ipcRenderer.send('number', num)
+}
+
+function buildWebBrowser(x, y, width, height) {
+    ipcRenderer.send('web', {x: x, y: y, width: width, height: height})
+}
+
+function resizeWebBrowser(x, y, width, height) {
+    ipcRenderer.send('webresize', {x: x, y: y, width: width, height: height})
 }
 
 //Function to load input html file 

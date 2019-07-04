@@ -52,7 +52,7 @@ function resizeBrowserView(x, y, width, height, viewNum) {
 
 //Function to delete the passed Browser View
 function deleteBrowserView(viewNum) {
-  viewArr[viewNum].destroy()
+  win.removeBrowserView(viewArr[viewNum])
   viewArr.splice(viewNum, 1)
   savedViewData[panelNum].splice(viewNum, 1)
   savedWebsites[panelNum].splice(viewNum, 1)
@@ -79,7 +79,7 @@ function destroyViews() {
   for(let i = 0; i < viewArr.length; i++)
   {
     updateBrowserView(viewArr[i].webContents.getURL(), i)
-    viewArr[i].destroy()
+    win.removeBrowserView(viewArr[i])
   }
   viewArr.length = 0
   windowPos = 0
@@ -99,11 +99,6 @@ function restoreViews() {
 }
 
 function setPanelNum(num) {
-  /*for(i = 0; i < viewArr.length; i++)
-  {
-    viewArr[i].destroy()
-  }
-  viewArr.length = 0*/
   panelNum = num
   for (i = 0; i < savedViewData[panelNum].length; i++) {
     view = new BrowserView({ webPreferences: { plugins: true } })
@@ -113,6 +108,26 @@ function setPanelNum(num) {
     view.webContents.loadURL(savedWebsites[panelNum][i].url)
     windowPos++
   }
+}
+
+function buildBrowser(x, y, width, height) {
+  view = new BrowserView({ webProferences: { plugins: true } })
+  viewArr.push(view)
+  win.addBrowserView(view)
+  view.setBounds({ x: x, y: y, width: width, height: height})
+  if(savedWebsites[panelNum].length === 0)
+  {
+    view.webContents.loadURL('https://www.google.com/')
+    savedWebsites[panelNum].push({ url: 'https://www.google.com/', viewNum: 0 })
+  }
+  else
+  {
+    view.webContents.loadURL(savedWebsites[panelNum][0].url)
+  }
+}
+
+function resizeWebBrowser(x, y, width, height) {
+  viewArr[0].setBounds({ x: x, y: y, width: width, height: height })
 }
 
 app.on('ready', createWindow)
@@ -151,6 +166,14 @@ ipcMain.on('number', (event, arg) => {
 
 ipcMain.on('update', (event, arg) => {
   updateBrowserView(arg.url, arg.viewNum)
+})
+
+ipcMain.on('web', (event, arg) => {
+  buildBrowser(arg.x, arg.y, arg.width, arg.height)
+})
+
+ipcMain.on('webresize', (event, arg) => {
+  resizeWebBrowser(arg.x, arg.y, arg.width, arg.height)
 })
 
 app.on('window-all-closed', () => {

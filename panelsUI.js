@@ -28,6 +28,7 @@ function bottomBar(input) {
     ctx.closePath()
 }
 
+//Function for checking if the mouse is clicking one of the bottom bar buttons
 function checkBox() {
     let mousePosition = getCanvasMousePosition(canvas, event)
     percentWidth = 0.142857

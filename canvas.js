@@ -7,6 +7,7 @@ let panels = JSON.parse(savedData)
 let whichPanel = 0
 
 barNum = 0
+webCheck = false
 
 //Canvas and UI drawing
 
@@ -23,6 +24,7 @@ function drawBorder() {
 }
 
 function panelView(input) {
+    webCheck = false
     whichPanel = input
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     for(i = 0; i < panels[whichPanel].length; i++)
@@ -61,14 +63,27 @@ window.onresize = function() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     ctx.clearRect(0, 0, canvas.width, canvas.height)
-    for(i = 0; i < panels[whichPanel].length; i++)
-    {
+    if(webCheck == false) {
+        for(i = 0; i < panels[whichPanel].length; i++)
+        {
+            ctx.beginPath()
+            ctx.rect(panels[whichPanel][i].x, panels[whichPanel][i].y, panels[whichPanel][i].width, panels[whichPanel][i].height)
+            ctx.stroke()
+            ctx.closePath()
+        }
+        bottomBar(barNum)
+    }
+    else {
+        webWidth = parseInt(canvas.width*0.93)
+        webHeight = parseInt(canvas.height*0.86)
+        resizeWebBrowser(parseInt(canvas.width*0.035), parseInt(canvas.height*0.05), webWidth, webHeight)
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
         ctx.beginPath()
-        ctx.rect(panels[whichPanel][i].x, panels[whichPanel][i].y, panels[whichPanel][i].width, panels[whichPanel][i].height)
+        ctx.rect(parseInt(canvas.width*0.035), parseInt(canvas.height*0.05), canvas.width*0.93, canvas.height*0.86)
         ctx.stroke()
         ctx.closePath()
+        bottomBar(6)
     }
-    bottomBar(barNum)
     //drawBorder()
 }
 
