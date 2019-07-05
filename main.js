@@ -111,7 +111,7 @@ function setPanelNum(num) {
 }
 
 function buildBrowser(x, y, width, height) {
-  view = new BrowserView({ webProferences: { plugins: true } })
+  view = new BrowserView({ webPreferences: { plugins: true, nodeIntegration: true } })
   viewArr.push(view)
   win.addBrowserView(view)
   view.setBounds({ x: x, y: y, width: width, height: height})

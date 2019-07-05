@@ -1,8 +1,11 @@
 //File that will contain everything to do with WebBrowsers
+var fs = require('fs')
 
 //A List of the Browsing History
 let history = []
 historyLocation = 0
+saveHistory = fs.readFileSync('savedHistory.json')
+let savedHistory = JSON.parse(saveHistory)
 
 //Function that handles all webBrowser events
 function webBrowser() {
@@ -41,6 +44,7 @@ function webText() {
     webGo.style.left = (canvas.width/2) + (boxWidth/1.95) + "px"
     webGo.style.top = parseInt(canvas.height*0.005) + "px"
     webGo.style.height = canvas.height*0.038 + "px"
+    webGo.style.width = canvas.width*0.03 + "px"
     webGo.style.borderRadius = "5px"
     webGo.onclick = function() {
         changeWebsite()
@@ -57,6 +61,12 @@ function webText() {
 
     ipcRenderer.on('webpage', (event, arg) => {
         webBox.value = arg
+        saveHistory = fs.readFileSync('savedHistory.json')
+        savedHistory = JSON.parse(saveHistory)
+        if(arg.includes("https://")) {
+            savedHistory.push(arg)
+        }
+        fs.writeFile('savedHistory.json', JSON.stringify(savedHistory), 'utf-8', () => {})
         if((historyLocation === history.length-1 || history.length === 0) && history[historyLocation] !== arg)
         {
             history.push(arg)
@@ -106,6 +116,22 @@ function webText() {
         }
     }
     document.getElementById("ui").appendChild(forwardButton)
+
+    historyButton = document.createElement("button")
+    historyButton.style.position = "absolute"
+    historyButton.id = "historyButton"
+    historyButton.className = "webGo"
+    historyButton.innerHTML = "History"
+    historyButton.style.left = (canvas.width/2) + (boxWidth/1.8) + "px"
+    historyButton.style.top = parseInt(canvas.height*0.005) + "px"
+    historyButton.style.height = canvas.height*0.038 + "px"
+    historyButton.style.width = canvas.width*0.048 + "px"
+    historyButton.style.borderRadius = "10%"
+    historyButton.onclick = function() {
+        var urL = url.format({pathname: path.join(__dirname, 'historyWindow.html'), protocol: 'file:', slashes: true});
+        updateWebBrowser(urL)
+    }
+    document.getElementById("ui").appendChild(historyButton)
 }
 
 //Handles if the user resizes the window
@@ -121,6 +147,7 @@ function webResize() {
     resizeGo.style.left = (canvas.width/2) + (resizeWidth/1.95) + "px"
     resizeGo.style.top = parseInt(canvas.height*0.005) + "px"
     resizeGo.style.height = canvas.height*0.038 + "px"
+    resizeGo.style.width = canvas.width*0.03 + "px"
 
     resizeBack = document.getElementById("backButton")
     resizeBack.style.left = (canvas.width/30) + "px"
@@ -133,6 +160,13 @@ function webResize() {
     resizeForward.style.top = parseInt(canvas.height*0.005) + "px"
     resizeForward.style.width = canvas.width*0.04 + "px"
     resizeForward.style.height = canvas.height*0.038 + "px"
+
+    resizeHistory = document.getElementById("historyButton")
+    resizeHistory.style.left = (canvas.width/2) + (resizeWidth/1.8) + "px"
+    resizeHistory.style.top = parseInt(canvas.height*0.005) + "px"
+    resizeHistory.style.height = canvas.height*0.038 + "px"
+    resizeHistory.style.width = canvas.width*0.048 + "px"
+    
 
 }
 
