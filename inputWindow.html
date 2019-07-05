@@ -18,17 +18,17 @@
     <script>
         function goToWebsite() {
             var x = document.getElementById("form1");
-            var y = x.elements["name"].value;
-            var h = "https://"
-            var i = "https://www."
-            var j = ".com"
-
-            if(!y.includes(i) && !y.includes(j))
-                y = i + y + j;
-            else if(!y.includes(h) && y.includes(j))
-                y = h + y;
-
-            window.location.href = y;
+            var userWeb = x.elements["name"].value;
+            
+            if (!userWeb.includes("https://") && userWeb.includes(".com") || userWeb.includes(".net") || userWeb.includes(".org") || userWeb.includes(".io") || userWeb.includes(".gov") || userWeb.includes(".edu") || userWeb.includes(".tv")) {
+                userWeb = "https://" + userWeb;
+            }
+            if (userWeb.includes(".com") || userWeb.includes(".net") || userWeb.includes(".org") || userWeb.includes(".io") || userWeb.includes(".gov") || userWeb.includes(".edu") || userWeb.includes(".tv")) {
+                window.location.href = userWeb;
+            }
+            else {
+                window.location.href = "https://www.google.com/search?q=" + userWeb;
+            }
         } 
 
     </script>

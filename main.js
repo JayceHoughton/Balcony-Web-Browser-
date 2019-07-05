@@ -124,6 +124,20 @@ function buildBrowser(x, y, width, height) {
   {
     view.webContents.loadURL(savedWebsites[panelNum][0].url)
   }
+  viewArr[0].webContents.on('did-navigate', function() {
+    //console.log(viewArr[0].webContents.getURL())
+    win.webContents.send('webpage', viewArr[0].webContents.getURL())
+  })
+
+  viewArr[0].webContents.on('did-navigate-in-page', function() {
+    //console.log(viewArr[0].webContents.getURL())
+    win.webContents.send('webpage', viewArr[0].webContents.getURL())
+  })
+}
+
+function updateWebBrowser(url) {
+  viewArr[0].webContents.loadURL(url)
+  savedWebsites[panelNum][0].url = url
 }
 
 function resizeWebBrowser(x, y, width, height) {
@@ -174,6 +188,10 @@ ipcMain.on('web', (event, arg) => {
 
 ipcMain.on('webresize', (event, arg) => {
   resizeWebBrowser(arg.x, arg.y, arg.width, arg.height)
+})
+
+ipcMain.on('updateB', (event, arg) => {
+  updateWebBrowser(arg)
 })
 
 app.on('window-all-closed', () => {

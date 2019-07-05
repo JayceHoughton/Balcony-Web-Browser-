@@ -15,6 +15,8 @@ canvas = document.getElementById("theCanvas")
 ctx = canvas.getContext("2d")
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
+defaultHeight = 800
+defaultWidth = 1500
 
 function drawBorder() {
     ctx.beginPath()
@@ -24,6 +26,10 @@ function drawBorder() {
 }
 
 function panelView(input) {
+    oldNodes = document.getElementById("ui")
+    while(oldNodes.firstChild) {
+        oldNodes.removeChild(oldNodes.firstChild)
+    }
     webCheck = false
     whichPanel = input
     ctx.clearRect(0, 0, canvas.width, canvas.height)
@@ -62,12 +68,14 @@ function clearView() {
 window.onresize = function() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+    heightPercent = window.innerHeight/defaultHeight
+    widthPercent = window.innerWidth/defaultWidth
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     if(webCheck == false) {
         for(i = 0; i < panels[whichPanel].length; i++)
         {
             ctx.beginPath()
-            ctx.rect(panels[whichPanel][i].x, panels[whichPanel][i].y, panels[whichPanel][i].width, panels[whichPanel][i].height)
+            ctx.rect(panels[whichPanel][i].x*heightPercent, panels[whichPanel][i].y*widthPercent, panels[whichPanel][i].width*widthPercent, panels[whichPanel][i].height*heightPercent)
             ctx.stroke()
             ctx.closePath()
         }
@@ -83,6 +91,7 @@ window.onresize = function() {
         ctx.stroke()
         ctx.closePath()
         bottomBar(6)
+        webResize()
     }
     //drawBorder()
 }

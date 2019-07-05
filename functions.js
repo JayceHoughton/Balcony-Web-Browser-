@@ -50,6 +50,10 @@ function resizeWebBrowser(x, y, width, height) {
     ipcRenderer.send('webresize', {x: x, y: y, width: width, height: height})
 }
 
+function updateWebBrowser(url) {
+    ipcRenderer.send('updateB', url)
+}
+
 //Function to load input html file 
 function takeInput(viewNum) {
     var urL = url.format({pathname: path.join(__dirname, 'inputWindow.html'), protocol: 'file:', slashes: true});
