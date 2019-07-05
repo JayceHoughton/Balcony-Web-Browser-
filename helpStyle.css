@@ -1,0 +1,58 @@
+body { 
+    overflow-y: scroll; 
+}
+
+.Q1, .Q2, .Q3, .Q4, .Q5, .Q6 {
+  background-color: #eee;
+  color: #444;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+}
+
+.active, .Q1:hover {
+  background-color: #ccc;
+}
+
+.active, .Q2:hover {
+  background-color: #ccc;
+}
+
+.active, .Q3:hover {
+  background-color: #ccc;
+}
+
+.active, .Q4:hover {
+  background-color: #ccc;
+}
+
+.active, .Q5:hover {
+  background-color: #ccc;
+}
+
+.active, .Q6:hover {
+  background-color: #ccc;
+}
+
+.Q1content, .Q2content, .Q3content, .Q4content, .Q5content, .Q6content {
+  padding: 0 18px;
+  display: none;
+  overflow: hidden;
+  background-color: #f1f1f1;
+}
+
+.Q1:after, .Q2:after, .Q3:after, .Q4:after, .Q5:after, .Q6:after {
+  content: '\02795'; /* Unicode character for "plus" sign (+) */
+  font-size: 13px;
+  color: white;
+  float: right;
+  margin-left: 5px;
+}
+
+.active:after {
+  content: "\2796"; /* Unicode character for "minus" sign (-) */
+}

@@ -18,6 +18,13 @@ function bottomBar(input) {
             ctx.fill()
         }
         ctx.closePath()
+        ctx.font = "25px Impact"
+        ctx.fillStyle = "#00bfff"
+        panelNum = i+1
+        if(i == 6)
+        {
+            ctx.fillText("Browser", startWidth, canvas.height*0.98)
+        }
         startWidth += canvas.width*percentWidth
     }
 

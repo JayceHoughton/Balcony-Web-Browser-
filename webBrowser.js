@@ -86,10 +86,10 @@ function webText() {
     backButton.id = "backButton"
     backButton.className = "webGo"
     backButton.innerHTML = "&#8592"
-    backButton.style.left = (canvas.width/30) + "px"
+    backButton.style.left = (canvas.width/15) + "px"
     backButton.style.top = parseInt(canvas.height*0.005) + "px"
     backButton.style.height = canvas.height*0.038 + "px"
-    backButton.style.width = canvas.width*0.04 + "px"
+    backButton.style.width = canvas.width*0.025 + "px"
     backButton.style.borderRadius = "10%"
     backButton.onclick = function() {
         if(historyLocation > 0) {
@@ -104,10 +104,10 @@ function webText() {
     forwardButton.id = "forwardButton"
     forwardButton.className = "webGo"
     forwardButton.innerHTML = "&#8594"
-    forwardButton.style.left = (canvas.width/13) + "px"
+    forwardButton.style.left = (canvas.width/10.5) + "px"
     forwardButton.style.top = parseInt(canvas.height*0.005) + "px"
     forwardButton.style.height = canvas.height*0.038 + "px"
-    forwardButton.style.width = canvas.width*0.04 + "px"
+    forwardButton.style.width = canvas.width*0.025 + "px"
     forwardButton.style.borderRadius = "10%"
     forwardButton.onclick = function() {
         if(historyLocation+1 < history.length) {
@@ -132,6 +132,22 @@ function webText() {
         updateWebBrowser(urL)
     }
     document.getElementById("ui").appendChild(historyButton)
+
+    helpButton = document.createElement("button")
+    helpButton.style.position = "absolute"
+    helpButton.id = "helpButton"
+    helpButton.className = "webGo"
+    helpButton.innerHTML = "Help"
+    helpButton.style.left = (canvas.width/30) + "px"
+    helpButton.style.top = parseInt(canvas.height*0.005) + "px"
+    helpButton.style.height = canvas.height*0.038 + "px"
+    helpButton.style.width = canvas.width*0.03 + "px"
+    helpButton.style.borderRadius = "10%"
+    helpButton.onclick = function() {
+        var urL = url.format({pathname: path.join(__dirname, 'helpWindow.html'), protocol: 'file:', slashes: true});
+        updateWebBrowser(urL)
+    }
+    document.getElementById("ui").appendChild(helpButton)
 }
 
 //Handles if the user resizes the window
@@ -150,15 +166,15 @@ function webResize() {
     resizeGo.style.width = canvas.width*0.03 + "px"
 
     resizeBack = document.getElementById("backButton")
-    resizeBack.style.left = (canvas.width/30) + "px"
+    resizeBack.style.left = (canvas.width/15) + "px"
     resizeBack.style.top = parseInt(canvas.height*0.005) + "px"
-    resizeBack.style.width = canvas.width*0.04 + "px"
+    resizeBack.style.width = canvas.width*0.025 + "px"
     resizeBack.style.height = canvas.height*0.038 + "px"
 
     resizeForward = document.getElementById("forwardButton")
-    resizeForward.style.left = (canvas.width/13) + "px"
+    resizeForward.style.left = (canvas.width/10.5) + "px"
     resizeForward.style.top = parseInt(canvas.height*0.005) + "px"
-    resizeForward.style.width = canvas.width*0.04 + "px"
+    resizeForward.style.width = canvas.width*0.025 + "px"
     resizeForward.style.height = canvas.height*0.038 + "px"
 
     resizeHistory = document.getElementById("historyButton")
@@ -166,7 +182,12 @@ function webResize() {
     resizeHistory.style.top = parseInt(canvas.height*0.005) + "px"
     resizeHistory.style.height = canvas.height*0.038 + "px"
     resizeHistory.style.width = canvas.width*0.048 + "px"
-    
+
+    resizeHelp = document.getElementById("helpButton")
+    resizeHelp.style.left = (canvas.width/30) + "px"
+    resizeHelp.style.top = parseInt(canvas.height*0.005) + "px"
+    resizeHelp.style.width = canvas.width*0.03 + "px"
+    resizeHelp.style.height = canvas.height*0.038 + "px"
 
 }
 
