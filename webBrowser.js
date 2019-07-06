@@ -1,11 +1,14 @@
 //File that will contain everything to do with WebBrowsers
 var fs = require('fs')
+const prompt = require('electron-prompt')
 
 //A List of the Browsing History
 let history = []
 historyLocation = 0
 saveHistory = fs.readFileSync('savedHistory.json')
 let savedHistory = JSON.parse(saveHistory)
+backgroundFirst = fs.readFileSync('backgroundImage.json')
+backgroundPic = JSON.parse(backgroundFirst)
 
 //Function that handles all webBrowser events
 function webBrowser() {
@@ -28,8 +31,8 @@ function webText() {
     webBox.id = "webBox"
     webBox.className = "webBox"
     webBox.style.position = "absolute"
-    boxWidth = canvas.width*0.75
-    webBox.style.left = (canvas.width/2) - (boxWidth/2) + "px"
+    boxWidth = canvas.width*0.7
+    webBox.style.left = (canvas.width/2) - (boxWidth/1.85) + "px"
     webBox.style.top = parseInt(canvas.height*0.005) + "px"
     webBox.style.width = boxWidth + "px"
     webBox.style.height = canvas.height*0.03 + "px"
@@ -41,7 +44,7 @@ function webText() {
     webGo.id = "webGo"
     webGo.className = "webGo"
     webGo.innerHTML = "GO"
-    webGo.style.left = (canvas.width/2) + (boxWidth/1.95) + "px"
+    webGo.style.left = (canvas.width/2) + (boxWidth/2.15) + "px"
     webGo.style.top = parseInt(canvas.height*0.005) + "px"
     webGo.style.height = canvas.height*0.038 + "px"
     webGo.style.width = canvas.width*0.03 + "px"
@@ -122,7 +125,7 @@ function webText() {
     historyButton.id = "historyButton"
     historyButton.className = "webGo"
     historyButton.innerHTML = "History"
-    historyButton.style.left = (canvas.width/2) + (boxWidth/1.8) + "px"
+    historyButton.style.left = (canvas.width/2) + (boxWidth/1.95) + "px"
     historyButton.style.top = parseInt(canvas.height*0.005) + "px"
     historyButton.style.height = canvas.height*0.038 + "px"
     historyButton.style.width = canvas.width*0.048 + "px"
@@ -148,19 +151,52 @@ function webText() {
         updateWebBrowser(urL)
     }
     document.getElementById("ui").appendChild(helpButton)
+
+    picButton = document.createElement("button")
+    picButton.style.position = "absolute"
+    picButton.id = "picButton"
+    picButton.className = "webGo"
+    picButton.innerHTML = "Style"
+    picButton.style.left = (canvas.width/2) + (boxWidth/1.71) + "px"
+    picButton.style.top = parseInt(canvas.height*0.005) + "px"
+    picButton.style.height = canvas.height*0.038 + "px"
+    picButton.style.width = canvas.width*0.055 + "px"
+    picButton.style.borderRadius = "10%"
+    picButton.onclick = function() {
+        prompt({
+            title: 'Enter Background Image Link',
+            label: '',
+            value: '',
+            inputAttrs: {
+                type: 'url'
+            }
+        })
+        .then((r) => {
+            if(r === null) {
+                //Do nothing, guess they didnt enter something?
+            } else {
+                console.log('result', r);
+                document.getElementById('body').style.backgroundImage = "url('" + r + "')"
+                backgroundPic = r
+                fs.writeFile('backgroundImage.json', JSON.stringify(backgroundPic), 'utf-8', () => {})
+            }
+        })
+        .catch(console.error);
+    }
+    document.getElementById("ui").appendChild(picButton)
 }
 
 //Handles if the user resizes the window
 function webResize() {
     resizeBox = document.getElementById("webBox")
-    resizeWidth = canvas.width*0.75
-    resizeBox.style.left = (canvas.width/2) - (resizeWidth/2) + "px"
+    resizeWidth = canvas.width*0.7
+    resizeBox.style.left = (canvas.width/2) - (resizeWidth/1.85) + "px"
     resizeBox.style.top = parseInt(canvas.height*0.005) + "px"
     resizeBox.style.width = resizeWidth + "px"
     resizeBox.style.height = canvas.height*0.03 + "px"
 
     resizeGo = document.getElementById("webGo")
-    resizeGo.style.left = (canvas.width/2) + (resizeWidth/1.95) + "px"
+    resizeGo.style.left = (canvas.width/2) + (resizeWidth/2.15) + "px"
     resizeGo.style.top = parseInt(canvas.height*0.005) + "px"
     resizeGo.style.height = canvas.height*0.038 + "px"
     resizeGo.style.width = canvas.width*0.03 + "px"
@@ -178,7 +214,7 @@ function webResize() {
     resizeForward.style.height = canvas.height*0.038 + "px"
 
     resizeHistory = document.getElementById("historyButton")
-    resizeHistory.style.left = (canvas.width/2) + (resizeWidth/1.8) + "px"
+    resizeHistory.style.left = (canvas.width/2) + (resizeWidth/1.95) + "px"
     resizeHistory.style.top = parseInt(canvas.height*0.005) + "px"
     resizeHistory.style.height = canvas.height*0.038 + "px"
     resizeHistory.style.width = canvas.width*0.048 + "px"
@@ -188,6 +224,13 @@ function webResize() {
     resizeHelp.style.top = parseInt(canvas.height*0.005) + "px"
     resizeHelp.style.width = canvas.width*0.03 + "px"
     resizeHelp.style.height = canvas.height*0.038 + "px"
+
+    resizePic = document.getElementById("picButton")
+    resizePic.style.left = (canvas.width/2) + (resizeWidth/1.71) + "px"
+    resizePic.style.top = parseInt(canvas.height*0.005) + "px"
+    resizePic.style.height = canvas.height*0.038 + "px"
+    resizePic.style.width = canvas.width*0.055 + "px"
+    
 
 }
 
