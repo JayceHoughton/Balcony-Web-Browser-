@@ -2,8 +2,10 @@ var fs = require('fs')
 
 //Panels array that saves state of all panels
 savedData = fs.readFileSync('saveData.json')
+premiumCheck = fs.readFileSync('premiumCheck.json')
 
 let panels = JSON.parse(savedData)
+let isPremium = JSON.parse(premiumCheck)
 let whichPanel = 0
 
 barNum = 0
@@ -289,20 +291,42 @@ function whileDrawing() {
 
         if(coordinates.x > leftCorner.x && coordinates.y > leftCorner.y && notInside == true)
         {
-            //Gets the dimensions of the final panel
-            panelDims = drawDragRect(canvas, event, leftCorner)
-            let viewNum = createNewPanel(panelDims.x, panelDims.y, panelDims.width, panelDims.height)
-            takeInput(viewNum)
+            if(isPremium === "False" && panels[whichPanel].length > 5) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height)
+                for(i = 0; i < panels[whichPanel].length; i++)
+                {
+                    ctx.beginPath()
+                    ctx.rect(panels[whichPanel][i].x, panels[whichPanel][i].y, panels[whichPanel][i].width, panels[whichPanel][i].height)
+                    ctx.stroke()
+                    ctx.closePath()
+                }
+                bottomBar(barNum)
+            } else if(isPremium !== "False" && panels[whichPanel].length > 7) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height)
+                for(i = 0; i < panels[whichPanel].length; i++)
+                {
+                    ctx.beginPath()
+                    ctx.rect(panels[whichPanel][i].x, panels[whichPanel][i].y, panels[whichPanel][i].width, panels[whichPanel][i].height)
+                    ctx.stroke()
+                    ctx.closePath()
+                }
+                bottomBar(barNum)
+            } else {
+                //Gets the dimensions of the final panel
+                panelDims = drawDragRect(canvas, event, leftCorner)
+                let viewNum = createNewPanel(panelDims.x, panelDims.y, panelDims.width, panelDims.height)
+                takeInput(viewNum)
 
-            //Pushes the finalized panel to the panel array
-            panels[whichPanel].push({
-                x: panelDims.x,
-                y: panelDims.y,
-                width: panelDims.width,
-                height: panelDims.height,
-                viewNum: viewNum
-            })
-            fs.writeFile('saveData.json', JSON.stringify(panels), 'utf-8', () => {})
+                //Pushes the finalized panel to the panel array
+                panels[whichPanel].push({
+                    x: panelDims.x,
+                    y: panelDims.y,
+                    width: panelDims.width,
+                    height: panelDims.height,
+                    viewNum: viewNum
+                })
+                fs.writeFile('saveData.json', JSON.stringify(panels), 'utf-8', () => {})
+            }
         }
         else
         {

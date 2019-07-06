@@ -1,4 +1,8 @@
 //File that contains the UI that will be persistent between all non-loginscreen views
+var fs = require('fs')
+
+premiumCheck = fs.readFileSync('premiumCheck.json')
+isPremium = JSON.parse(premiumCheck)
 
 function bottomBar(input) {
     percentWidth = 0.142857
@@ -21,6 +25,10 @@ function bottomBar(input) {
         ctx.font = "25px Impact"
         ctx.fillStyle = "#00bfff"
         panelNum = i+1
+        if(isPremium === "False" && i !== 0 && i !== 6)
+        {
+            ctx.fillText("Premium", startWidth, canvas.height*0.98)
+        }
         if(i == 6)
         {
             ctx.fillText("Browser", startWidth, canvas.height*0.98)
@@ -43,28 +51,30 @@ function checkBox() {
     endWidth = canvas.width*percentWidth
     for(let i = 0; i < 7; i++)
     {
-        if(mousePosition.y > canvas.height*0.93 && mousePosition.x > startWidth && mousePosition.x < (startWidth+endWidth))
-        {
-            document.removeEventListener('mousedown', checkBox)
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            for(j = 0; j < panels[whichPanel].length; j++)
+        if((isPremium === "False" && (i === 0 || i === 6)) || isPremium === "True") {
+            if(mousePosition.y > canvas.height*0.93 && mousePosition.x > startWidth && mousePosition.x < (startWidth+endWidth))
             {
-                ctx.beginPath()
-                ctx.rect(panels[whichPanel][j].x, panels[whichPanel][j].y, panels[whichPanel][j].width, panels[whichPanel][j].height)
-                ctx.stroke()
-                ctx.closePath()
+                document.removeEventListener('mousedown', checkBox)
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                for(j = 0; j < panels[whichPanel].length; j++)
+                {
+                    ctx.beginPath()
+                    ctx.rect(panels[whichPanel][j].x, panels[whichPanel][j].y, panels[whichPanel][j].width, panels[whichPanel][j].height)
+                    ctx.stroke()
+                    ctx.closePath()
+                }
+                clearView()
+                bottomBar(i)
+                if(i < 6)
+                {
+                    panelView(i)
+                }
+                else {
+                    webBrowser()
+                }
+                document.addEventListener('mousedown', checkBox)
             }
-            clearView()
-            bottomBar(i)
-            if(i < 6)
-            {
-                panelView(i)
-            }
-            else {
-                webBrowser()
-            }
-            document.addEventListener('mousedown', checkBox)
         }
         startWidth += canvas.width*percentWidth
     }
