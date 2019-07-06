@@ -5,6 +5,8 @@ premiumCheck = fs.readFileSync('premiumCheck.json')
 isPremium = JSON.parse(premiumCheck)
 
 function bottomBar(input) {
+    premiumCheck = fs.readFileSync('premiumCheck.json')
+    isPremium = JSON.parse(premiumCheck)
     percentWidth = 0.142857
     startWidth = 0
     endWidth = canvas.width*percentWidth
@@ -45,6 +47,8 @@ function bottomBar(input) {
 
 //Function for checking if the mouse is clicking one of the bottom bar buttons
 function checkBox() {
+    premiumCheck = fs.readFileSync('premiumCheck.json')
+    isPremium = JSON.parse(premiumCheck)
     let mousePosition = getCanvasMousePosition(canvas, event)
     percentWidth = 0.142857
     startWidth = 0

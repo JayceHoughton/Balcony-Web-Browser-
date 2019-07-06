@@ -1,9 +1,7 @@
 const { app, BrowserWindow, BrowserView, session, ipcMain } = require('electron')
 var fs = require('fs')
-
-let win
-let ses
-let view
+global.registeredUser = {prop1:0}; /**************Added this Global variable*******/
+let win, ses, view, loginWindow
 
 //Window Position is used to keep track of linking the Browser View to its corresponding Panel in canvas
 let windowPos = 0
@@ -12,11 +10,24 @@ let panelNum = 0
 //Webpages and View Data are stored to JSON file for persistent storage
 webpages = fs.readFileSync('savedWebpages.json')
 viewData = fs.readFileSync('savedViewData.json')
+registrationCheck = fs.readFileSync('premiumCheck.json')
+let registeredUser1 = JSON.parse(registrationCheck)
 let savedViewData = JSON.parse(viewData)
 let savedWebsites = JSON.parse(webpages)
 let viewArr = []
 
 function createWindow() {
+  let loginSes = session.fromPartition('persist:part1')
+  
+  function  getCookies(){
+    if (registeredUser1 == "True"){
+      return 0
+    }
+    else{
+      return 1
+    }
+
+  }
   win = new BrowserWindow({ width: 1500, height: 800, fullscreenable: false, webPreferences: { webviewTag: true, nodeIntegration: true, plugins: true } })
 
   win.setMenu(null)
@@ -28,6 +39,30 @@ function createWindow() {
   win.on('closed', () => {
     win = null
   })
+
+  if (getCookies()) {
+
+    loginWindow = new BrowserWindow({
+      width: 1500, height: 800,
+      webPreferences: {
+        nodeIntegration: true,
+        session: loginSes
+      },
+      parent: win,
+      resizable: false,
+      modal: true
+    })
+
+    loginWindow.loadFile('Login.html')
+    loginWindow.webContents.openDevTools()
+
+    loginWindow.on('closed', () => {
+      if (registeredUser.prop1) {
+        registrationCheck = "True"
+        fs.writeFile('premiumCheck.json', JSON.stringify(registrationCheck), 'utf-8', () => {win.webContents.send('logged') })
+      }
+    })
+  }
 }
 
 //Creates a BrowserView using infromation provided from renderer signal
