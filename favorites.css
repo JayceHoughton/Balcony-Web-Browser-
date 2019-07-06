@@ -1,0 +1,29 @@
+body { 
+    overflow-y: scroll; 
+    background-image: url('https://images.pexels.com/photos/373912/pexels-photo-373912.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260');
+    background-size: cover;
+}
+
+button {
+    border: none;
+}
+.historyButton {
+    background-color: rgb(255, 255, 255);
+    cursor: pointer;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    text-align: left;
+    white-space: nowrap;
+    border: 2px solid rgb(135, 135, 151);
+}
+.historyButton:focus
+{
+    outline: none;
+}
+.historyButton:active {
+    transform: translateY(2px);
+    background-color: rgb(54, 200, 236);
+    outline: none;
+}

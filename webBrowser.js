@@ -9,6 +9,9 @@ saveHistory = fs.readFileSync('savedHistory.json')
 let savedHistory = JSON.parse(saveHistory)
 backgroundFirst = fs.readFileSync('backgroundImage.json')
 backgroundPic = JSON.parse(backgroundFirst)
+faveFirst = fs.readFileSync('favorites.json')
+let savedFavorites = JSON.parse(faveFirst)
+let currentPage = ''
 
 //Function that handles all webBrowser events
 function webBrowser() {
@@ -31,8 +34,8 @@ function webText() {
     webBox.id = "webBox"
     webBox.className = "webBox"
     webBox.style.position = "absolute"
-    boxWidth = canvas.width*0.7
-    webBox.style.left = (canvas.width/2) - (boxWidth/1.85) + "px"
+    boxWidth = canvas.width*0.6
+    webBox.style.left = (canvas.width/2) - (boxWidth/1.6) + "px"
     webBox.style.top = parseInt(canvas.height*0.005) + "px"
     webBox.style.width = boxWidth + "px"
     webBox.style.height = canvas.height*0.03 + "px"
@@ -44,7 +47,7 @@ function webText() {
     webGo.id = "webGo"
     webGo.className = "webGo"
     webGo.innerHTML = "GO"
-    webGo.style.left = (canvas.width/2) + (boxWidth/2.15) + "px"
+    webGo.style.left = (canvas.width/2) + (boxWidth/2.6) + "px"
     webGo.style.top = parseInt(canvas.height*0.005) + "px"
     webGo.style.height = canvas.height*0.038 + "px"
     webGo.style.width = canvas.width*0.03 + "px"
@@ -64,12 +67,13 @@ function webText() {
 
     ipcRenderer.on('webpage', (event, arg) => {
         webBox.value = arg
+        currentPage = arg
         saveHistory = fs.readFileSync('savedHistory.json')
         savedHistory = JSON.parse(saveHistory)
         if(arg.includes("https://")) {
             savedHistory.push(arg)
+            fs.writeFile('savedHistory.json', JSON.stringify(savedHistory), 'utf-8', () => {})
         }
-        fs.writeFile('savedHistory.json', JSON.stringify(savedHistory), 'utf-8', () => {})
         if((historyLocation === history.length-1 || history.length === 0) && history[historyLocation] !== arg)
         {
             history.push(arg)
@@ -125,7 +129,7 @@ function webText() {
     historyButton.id = "historyButton"
     historyButton.className = "webGo"
     historyButton.innerHTML = "History"
-    historyButton.style.left = (canvas.width/2) + (boxWidth/1.95) + "px"
+    historyButton.style.left = (canvas.width/2) + (boxWidth/2.28) + "px"
     historyButton.style.top = parseInt(canvas.height*0.005) + "px"
     historyButton.style.height = canvas.height*0.038 + "px"
     historyButton.style.width = canvas.width*0.048 + "px"
@@ -157,10 +161,10 @@ function webText() {
     picButton.id = "picButton"
     picButton.className = "webGo"
     picButton.innerHTML = "Style"
-    picButton.style.left = (canvas.width/2) + (boxWidth/1.71) + "px"
+    picButton.style.left = (canvas.width/2) + (boxWidth/1.91) + "px"
     picButton.style.top = parseInt(canvas.height*0.005) + "px"
     picButton.style.height = canvas.height*0.038 + "px"
-    picButton.style.width = canvas.width*0.055 + "px"
+    picButton.style.width = canvas.width*0.05 + "px"
     picButton.style.borderRadius = "10%"
     picButton.onclick = function() {
         prompt({
@@ -184,19 +188,55 @@ function webText() {
         .catch(console.error);
     }
     document.getElementById("ui").appendChild(picButton)
+
+    favoriteButton = document.createElement("button")
+    favoriteButton = document.createElement("button")
+    favoriteButton.style.position = "absolute"
+    favoriteButton.id = "favoriteButton"
+    favoriteButton.className = "webGo"
+    favoriteButton.innerHTML = "&#9733"
+    favoriteButton.style.left = (canvas.width/2) + (boxWidth/1.63) + "px"
+    favoriteButton.style.top = parseInt(canvas.height*0.005) + "px"
+    favoriteButton.style.height = canvas.height*0.038 + "px"
+    favoriteButton.style.width = canvas.width*0.03 + "px"
+    favoriteButton.style.borderRadius = "10%"
+    favoriteButton.onclick = function() {
+        faveFirst = fs.readFileSync('favorites.json')
+        savedFavorites = JSON.parse(faveFirst)
+        savedFavorites.push(currentPage)
+        fs.writeFile('favorites.json', JSON.stringify(savedFavorites), 'utf-8', () => {})
+    }
+    document.getElementById("ui").appendChild(favoriteButton)
+
+    favePageButton = document.createElement("button")
+    favePageButton = document.createElement("button")
+    favePageButton.style.position = "absolute"
+    favePageButton.id = "favePageButton"
+    favePageButton.className = "webGo"
+    favePageButton.innerHTML = "Favorites"
+    favePageButton.style.left = (canvas.width/2) + (boxWidth/1.49) + "px"
+    favePageButton.style.top = parseInt(canvas.height*0.005) + "px"
+    favePageButton.style.height = canvas.height*0.038 + "px"
+    favePageButton.style.width = canvas.width*0.062 + "px"
+    favePageButton.style.borderRadius = "10%"
+    favePageButton.onclick = function() {
+        var urL = url.format({pathname: path.join(__dirname, 'favoritesWindow.html'), protocol: 'file:', slashes: true});
+        updateWebBrowser(urL)
+    }
+    document.getElementById("ui").appendChild(favePageButton)
 }
 
 //Handles if the user resizes the window
 function webResize() {
     resizeBox = document.getElementById("webBox")
-    resizeWidth = canvas.width*0.7
-    resizeBox.style.left = (canvas.width/2) - (resizeWidth/1.85) + "px"
+    resizeWidth = canvas.width*0.6
+    resizeBox.style.left = (canvas.width/2) - (resizeWidth/1.6) + "px"
     resizeBox.style.top = parseInt(canvas.height*0.005) + "px"
     resizeBox.style.width = resizeWidth + "px"
     resizeBox.style.height = canvas.height*0.03 + "px"
 
     resizeGo = document.getElementById("webGo")
-    resizeGo.style.left = (canvas.width/2) + (resizeWidth/2.15) + "px"
+    resizeGo.style.left = (canvas.width/2) + (resizeWidth/2.6) + "px"
     resizeGo.style.top = parseInt(canvas.height*0.005) + "px"
     resizeGo.style.height = canvas.height*0.038 + "px"
     resizeGo.style.width = canvas.width*0.03 + "px"
@@ -214,7 +254,7 @@ function webResize() {
     resizeForward.style.height = canvas.height*0.038 + "px"
 
     resizeHistory = document.getElementById("historyButton")
-    resizeHistory.style.left = (canvas.width/2) + (resizeWidth/1.95) + "px"
+    resizeHistory.style.left = (canvas.width/2) + (resizeWidth/2.28) + "px"
     resizeHistory.style.top = parseInt(canvas.height*0.005) + "px"
     resizeHistory.style.height = canvas.height*0.038 + "px"
     resizeHistory.style.width = canvas.width*0.048 + "px"
@@ -226,11 +266,22 @@ function webResize() {
     resizeHelp.style.height = canvas.height*0.038 + "px"
 
     resizePic = document.getElementById("picButton")
-    resizePic.style.left = (canvas.width/2) + (resizeWidth/1.71) + "px"
+    resizePic.style.left = (canvas.width/2) + (resizeWidth/1.91) + "px"
     resizePic.style.top = parseInt(canvas.height*0.005) + "px"
     resizePic.style.height = canvas.height*0.038 + "px"
-    resizePic.style.width = canvas.width*0.055 + "px"
-    
+    resizePic.style.width = canvas.width*0.05 + "px"
+
+    resizeFavorite = document.getElementById("favoriteButton")
+    resizeFavorite.style.left = (canvas.width/2) + (resizeWidth/1.63) + "px"
+    resizeFavorite.style.top = parseInt(canvas.height*0.005) + "px"
+    resizeFavorite.style.height = canvas.height*0.038 + "px"
+    resizeFavorite.style.width = canvas.width*0.03 + "px"
+
+    resizeFavePage = document.getElementById("favePageButton")
+    resizeFavePage.style.left = (canvas.width/2) + (resizeWidth/1.49) + "px"
+    resizeFavePage.style.top = parseInt(canvas.height*0.005) + "px"
+    resizeFavePage.style.height = canvas.height*0.038 + "px"
+    resizeFavePage.style.width = canvas.width*0.062 + "px"
 
 }
 
