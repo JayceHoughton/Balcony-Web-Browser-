@@ -1,0 +1,39 @@
+<html>
+    <link rel = "stylesheet" href = "inputStyle.css">
+    <head>
+        <title>Panel View</title>
+    </head>
+    <body>
+
+        <div class = "backgroundImage">
+            <div class = "input">
+                <form id = form1>
+                    <input type = "text" id = "webst" name = "name">
+                    <input type = "button" value = "Lets Go!" onclick = "goToWebsite()">
+                </form>
+            </div>
+        </div>
+    </body>
+    
+    <script>
+        function goToWebsite() {
+            var x = document.getElementById("form1");
+            var userWeb = x.elements["name"].value;
+            
+            if (!userWeb.includes("https://") && userWeb.includes(".com") || userWeb.includes(".net") || userWeb.includes(".org") || userWeb.includes(".io") || userWeb.includes(".gov") || userWeb.includes(".edu") || userWeb.includes(".tv")) {
+                userWeb = "https://" + userWeb;
+            }
+            if (userWeb.includes(".com") || userWeb.includes(".net") || userWeb.includes(".org") || userWeb.includes(".io") || userWeb.includes(".gov") || userWeb.includes(".edu") || userWeb.includes(".tv")) {
+                window.location.href = userWeb;
+            }
+            else {
+                window.location.href = "https://www.google.com/search?q=" + userWeb;
+            }
+        } 
+
+    </script>
+
+
+
+
+</html>

@@ -3,12 +3,36 @@ html, body
     height: 100%;
     width: 100%;
     margin: 0;
-    overflow-x: hidden;
-	background-color: #8470ff
+    overflow: hidden;
 }
 
 webview {
     max-height: 100%;
     max-width: 100%;
     object-fit: contain;
+}
+
+input {
+    outline: none;
+}
+.webBox:focus {
+    border: 2px solid rgb(18, 142, 173);
+    outline: 0;
+}
+
+button {
+    border: none;
+}
+.webGo {
+    background-color: rgb(148, 225, 245);
+    cursor: pointer;
+}
+.webGo:focus
+{
+    outline: none;
+}
+.webGo:active {
+    transform: translateY(2px);
+    background-color: rgb(54, 200, 236);
+    outline: none;
 }

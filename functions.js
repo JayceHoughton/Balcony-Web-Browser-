@@ -1,9 +1,11 @@
-const {ipcRenderer} = require('electron')
+const {ipcRenderer, ipcMain, BrowserWindow} = require('electron')
+const url = require('url');
+const path = require('path');
 
 
 //Function to create new Panels. Takes X and Y positions, Width, Height, and URL. Uses ipcRenderer to signal the main.js file
 //to run the createBrowserView function which takes these parameters. x, y, width, height are integers, url is a string.
-function createNewPanel(x, y, width, height, url) {
+function createNewPanel(x, y, width, height) {
     return ipcRenderer.sendSync('makeWindow', {x: x, y: y, width: width, height: height})
 }
 
@@ -17,6 +19,10 @@ function deletePanelDims(viewNum) {
 }
 
 //Function to update the website contents of a Browserview
+function setPanelWebsite(url, viewNum) {
+    ipcRenderer.send('set', {url: url, viewNum: viewNum})
+}
+
 function updatePanelWebsite(url, viewNum) {
     ipcRenderer.send('update', {url: url, viewNum: viewNum})
 }
@@ -34,4 +40,22 @@ function restorePanelView() {
 //Function to set the panel number used when calling panelView
 function setPanelNumber(num) {
     ipcRenderer.send('number', num)
+}
+
+function buildWebBrowser(x, y, width, height) {
+    ipcRenderer.send('web', {x: x, y: y, width: width, height: height})
+}
+
+function resizeWebBrowser(x, y, width, height) {
+    ipcRenderer.send('webresize', {x: x, y: y, width: width, height: height})
+}
+
+function updateWebBrowser(url) {
+    ipcRenderer.send('updateB', url)
+}
+
+//Function to load input html file 
+function takeInput(viewNum) {
+    var urL = url.format({pathname: path.join(__dirname, 'inputWindow.html'), protocol: 'file:', slashes: true});
+    setPanelWebsite(urL, viewNum)
 }

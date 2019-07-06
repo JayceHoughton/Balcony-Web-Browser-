@@ -6,4 +6,4 @@
 //You can comment out panelView and you will get a blank electron app, which may be useful for you
 //working on other UI
 
-//panelView(0)
+panelView(0)

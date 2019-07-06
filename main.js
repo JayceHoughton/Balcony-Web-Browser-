@@ -37,7 +37,6 @@ function createBrowserView(x, y, width, height) {
   win.addBrowserView(view)
   view.setBounds({ x: x, y: y, width: width, height: height })
   savedViewData[panelNum].push({ x: x, y: y, width: width, height: height })
-  fs.writeFile('savedViewData.json', JSON.stringify(savedViewData), 'utf-8', () => { })
   //view.setAutoResize({width: false, height: true})
   //view.webContents.loadURL(url)
 }
@@ -53,7 +52,7 @@ function resizeBrowserView(x, y, width, height, viewNum) {
 
 //Function to delete the passed Browser View
 function deleteBrowserView(viewNum) {
-  viewArr[viewNum].destroy()
+  win.removeBrowserView(viewArr[viewNum])
   viewArr.splice(viewNum, 1)
   savedViewData[panelNum].splice(viewNum, 1)
   savedWebsites[panelNum].splice(viewNum, 1)
@@ -65,20 +64,28 @@ function deleteBrowserView(viewNum) {
   }
 }
 
-function updateBrowserView(url, viewNum) {
+function setBrowserView(url, viewNum) {
   viewArr[viewNum].webContents.loadURL(url)
   savedWebsites[panelNum].push({ url: url, viewNum: viewNum })
 }
 
+function updateBrowserView(url, viewNum) {
+  //viewArr[viewNum].webContents.loadURL(url)
+  savedWebsites[panelNum][viewNum].url = url
+}
+
 function destroyViews() {
-  fs.writeFile('savedViewData.json', JSON.stringify(savedViewData), 'utf-8', () => { })
-  fs.writeFile('savedWebpages.json', JSON.stringify(savedWebsites), 'utf-8', () => { })
   
-  for(i = 0; i < viewArr.length; i++)
+  for(let i = 0; i < viewArr.length; i++)
   {
-    viewArr[i].destroy()
+    updateBrowserView(viewArr[i].webContents.getURL(), i)
+    win.removeBrowserView(viewArr[i])
   }
   viewArr.length = 0
+  windowPos = 0
+
+  fs.writeFile('savedViewData.json', JSON.stringify(savedViewData), 'utf-8', () => { })
+  fs.writeFile('savedWebpages.json', JSON.stringify(savedWebsites), 'utf-8', () => { })
 }
 
 function restoreViews() {
@@ -103,6 +110,40 @@ function setPanelNum(num) {
   }
 }
 
+function buildBrowser(x, y, width, height) {
+  view = new BrowserView({ webPreferences: { plugins: true, nodeIntegration: true } })
+  viewArr.push(view)
+  win.addBrowserView(view)
+  view.setBounds({ x: x, y: y, width: width, height: height})
+  if(savedWebsites[panelNum].length === 0)
+  {
+    view.webContents.loadURL('https://www.google.com/')
+    savedWebsites[panelNum].push({ url: 'https://www.google.com/', viewNum: 0 })
+  }
+  else
+  {
+    view.webContents.loadURL(savedWebsites[panelNum][0].url)
+  }
+  viewArr[0].webContents.on('did-navigate', function() {
+    //console.log(viewArr[0].webContents.getURL())
+    win.webContents.send('webpage', viewArr[0].webContents.getURL())
+  })
+
+  viewArr[0].webContents.on('did-navigate-in-page', function() {
+    //console.log(viewArr[0].webContents.getURL())
+    win.webContents.send('webpage', viewArr[0].webContents.getURL())
+  })
+}
+
+function updateWebBrowser(url) {
+  viewArr[0].webContents.loadURL(url)
+  savedWebsites[panelNum][0].url = url
+}
+
+function resizeWebBrowser(x, y, width, height) {
+  viewArr[0].setBounds({ x: x, y: y, width: width, height: height })
+}
+
 app.on('ready', createWindow)
 
 //Responds to the makeWindow signal from functions. Calls createBrowserView
@@ -121,8 +162,8 @@ ipcMain.on('delete', (event, arg) => {
   deleteBrowserView(arg)
 })
 
-ipcMain.on('update', (event, arg) => {
-  updateBrowserView(arg.url, arg.viewNum)
+ipcMain.on('set', (event, arg) => {
+  setBrowserView(arg.url, arg.viewNum)
 })
 
 ipcMain.on('clear', (event, arg) => {
@@ -137,7 +178,27 @@ ipcMain.on('number', (event, arg) => {
   setPanelNum(arg)
 })
 
+ipcMain.on('update', (event, arg) => {
+  updateBrowserView(arg.url, arg.viewNum)
+})
+
+ipcMain.on('web', (event, arg) => {
+  buildBrowser(arg.x, arg.y, arg.width, arg.height)
+})
+
+ipcMain.on('webresize', (event, arg) => {
+  resizeWebBrowser(arg.x, arg.y, arg.width, arg.height)
+})
+
+ipcMain.on('updateB', (event, arg) => {
+  updateWebBrowser(arg)
+})
+
 app.on('window-all-closed', () => {
+  for(let i = 0; i < viewArr.length; i++)
+  {
+    updateBrowserView(viewArr[i].webContents.getURL(), i)
+  }
   fs.writeFile('savedViewData.json', JSON.stringify(savedViewData), 'utf-8', () => { })
   fs.writeFile('savedWebpages.json', JSON.stringify(savedWebsites), 'utf-8', () => { })
   //Uncomment if you want to see the names of all the cookies
