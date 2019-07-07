@@ -12,8 +12,18 @@ webpages = fs.readFileSync('savedWebpages.json')
 viewData = fs.readFileSync('savedViewData.json')
 registrationCheck = fs.readFileSync('premiumCheck.json')
 let registeredUser1 = JSON.parse(registrationCheck)
-let savedViewData = JSON.parse(viewData)
-let savedWebsites = JSON.parse(webpages)
+let savedViewData = [[],[],[],[],[],[],[]]
+try {
+  savedViewData = JSON.parse(viewData)
+} catch {
+    //Couldnt parse for some reason
+  }
+let savedWebsites = [[],[],[],[],[],[],[{"url":"https://www.google.com/","viewNum":0}]]
+try {
+  savedWebsites = JSON.parse(webpages)
+} catch {
+  //Couldn't parse for some reason
+}
 let viewArr = []
 
 function createWindow() {
@@ -238,8 +248,8 @@ app.on('window-all-closed', () => {
   {
     updateBrowserView(viewArr[i].webContents.getURL(), i)
   }
-  fs.writeFile('savedViewData.json', JSON.stringify(savedViewData), 'utf-8', () => { })
-  fs.writeFile('savedWebpages.json', JSON.stringify(savedWebsites), 'utf-8', () => { })
+  fs.writeFileSync('savedViewData.json', JSON.stringify(savedViewData), 'utf-8', () => { })
+  fs.writeFileSync('savedWebpages.json', JSON.stringify(savedWebsites), 'utf-8', () => { })
   //Uncomment if you want to see the names of all the cookies
   session.defaultSession.cookies.get({}, function (err, cookies) {
     for (i = 0; i < cookies.length; i++) {
