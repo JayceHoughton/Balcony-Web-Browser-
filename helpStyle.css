@@ -1,5 +1,7 @@
 body { 
     overflow-y: scroll; 
+    background-image: url('https://images.pexels.com/photos/225222/pexels-photo-225222.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260');
+    background-size: cover;
 }
 
 .Q1, .Q2, .Q3, .Q4, .Q5, .Q6 {
