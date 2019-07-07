@@ -1,52 +1,69 @@
-body{
-    margin: 0;
-    padding: 0;
-    background: #2d3436;
+body, html{
+    height : 100%;
+    background-repeat : no-repeat;
+    background-size : cover;
+    overflow: hidden;
 }
 
 .middle{
+    border: none;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-
+    padding: 100px;
+    background-image: url('https://images.pexels.com/photos/225222/pexels-photo-225222.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260');
+    background-size: cover;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
 }
 
-.btn{
-    position: relative;
-    display: block;
+.login {
+    margin: auto;
+    text-align: center;
+    font-size: 25px;
     color: white;
-    font-size: 14px;
-    font-family: "montserrat";
-    text-decoration: none;
-    margin: 30px 0;
-    border: 2px solid #3376FF;
-    padding: 14px 60px;
+    font-family: "Arial Black";
+}
+
+.inp {
+    width: 192px;
+    padding: 5px 0px;
+    border-radius: 10px;
+    display: block;
+    margin: auto;
+}
+.inp:focus {
+    background-color: rgb(148, 225, 245);
+    outline: none;
+}
+
+.but {
+    color: white;
+    background-color: rgb(228, 48, 48);
+    margin: auto;
+    width: 200px;
+    height: 50px;
+    font-size: 15px;
+    font-family: "Arial Black";
+    border: none;
     text-transform: uppercase;
     overflow: hidden;
     transition: 1s all ease;
+    text-decoration: none;
+    cursor: pointer;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
 }
-
-.btn::before{
-    background: #3376FF;
-    content: "";
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: -1;
-    transition: all 0.6s ease;
+.but:focus {
+    outline: none;
 }
-
-.btn1::before{
-    width: 100%;
-    height: 0;
-    transform: translate (-50%,-50%);
+.but:hover {
+    background-color: rgb(54, 200, 236);
 }
-
-.btn:hover::before{
-    height:380%;
+.but:active {
+    transform: translateY(2px);
+    background-color: rgb(54, 200, 236);
+    outline: none;
 }
 

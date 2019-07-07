@@ -1,6 +1,6 @@
 const { app, BrowserWindow, BrowserView, session, ipcMain } = require('electron')
 var fs = require('fs')
-global.registeredUser = {prop1:0}; /**************Added this Global variable*******/
+//global.registeredUser = {prop1:0}; /**************Added this Global variable*******/
 let win, ses, view, loginWindow
 
 //Window Position is used to keep track of linking the Browser View to its corresponding Panel in canvas
@@ -32,15 +32,19 @@ function createWindow() {
 
   win.setMenu(null)
 
-  win.loadFile('index.html')
+  if(!getCookies()) {
+    win.loadFile('index.html')
+  } else {
+    win.loadFile('Login.html')
+  }
 
-  win.webContents.openDevTools()
+  //win.webContents.openDevTools()
 
   win.on('closed', () => {
     win = null
   })
 
-  if (getCookies()) {
+  /*if (getCookies()) {
 
     loginWindow = new BrowserWindow({
       width: 1500, height: 800,
@@ -62,7 +66,7 @@ function createWindow() {
         fs.writeFile('premiumCheck.json', JSON.stringify(registrationCheck), 'utf-8', () => {win.webContents.send('logged') })
       }
     })
-  }
+  }*/
 }
 
 //Creates a BrowserView using infromation provided from renderer signal

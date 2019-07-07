@@ -13,48 +13,50 @@
 
     </style>
   </head>
-  <body>
-    <h1>Login Screen</h1>
+  <body id="body">
     <div class = "middle">
-      <a href="" id = "GuestButton" class = "btn btn1" onclick = "GuestMode()"> Guest</a>
-      <a href="" class = "btn btn1" onclick = "generateCode()"> Register</a>
+        <p class = "login">Enter Product Key</h2><br/>
+        <input class = "inp" type = "text" id = "webst" name = "name"><br/>
+        <button class = "but" type="submit" name = "button" id="PremiumLogin" onclick = "regesterUser()">Premium Login</button><br/><br/>
+      <button id = "GuestButton" class = "but" onclick = "GuestMode()"> Guest</button><br/><br/>
+      <button class = "but" onclick = "generateCode()"> Register</button>
     </div>
 
-
-    <form id = form1>
-        <input type = "text" id = "webst" name = "name">
-        <button type="submit" name = "button" id="PremiumLogin" onclick = "regesterUser()">Premium Login</button>
-    </form>
+    <script>
+    
+    </script>
 
     <script>
-      function GuestMode(){
-        var remote = require('electron').remote; 
+      const prompt = require('electron-prompt')
+      const { dialog } = require('electron').remote
+      var getRemote = require('electron').remote
+      var fs = require('fs')
+      backgroundFirst = fs.readFileSync('backgroundImage.json')
+      backgroundPic = JSON.parse(backgroundFirst)
+      document.getElementById('body').style.backgroundImage = "url('" + backgroundPic + "')"
+
+      function GuestMode(){ 
         console.log('Guest Button was clicked')
-        var window = remote.getCurrentWindow();
-        window.close();
+        var window = getRemote.getCurrentWindow();
+        window.loadFile('index.html');
       }
 
 
       function regesterUser(){
-        var x = document.getElementById("form1");
-        var code = x.elements["name"].value;
+        var x = document.getElementById("webst");
+        var code = x.value;
         var codeChecker = 0;
         if (code.length >= 12){
         codeChecker = code[0].charCodeAt(0) + code[1].charCodeAt(0) + code[2].charCodeAt(0) + code[3].charCodeAt(0) + code[4].charCodeAt(0) + code[5].charCodeAt(0) + code[6].charCodeAt(0) + code[7].charCodeAt(0) + code[8].charCodeAt(0) + code[9].charCodeAt(0) +code[10].charCodeAt(0) + code[11].charCodeAt(0)
         }
     
-
         if ((codeChecker % 2 == 0) && (codeChecker >= 500)){
-          console.log("The length is correct");
-          var remote = require('electron').remote;     
-          remote.getGlobal('registeredUser').prop1 = 1;
-          console.log("ResteredUser: " + remote.getGlobal('registeredUser').prop1 );
-          var window = remote.getCurrentWindow();
-          window.close();
+          fs.writeFile('premiumCheck.json', JSON.stringify("True"), 'utf-8', () => {})
+          var window = getRemote.getCurrentWindow();
+          window.loadFile('index.html');
         }
         else{
-          console.log("Incorrect code");
-          alert ("Incorrect Code");
+          dialog.showMessageBox(null, options = {title: "Invalid Key", type: "info", message: "Product Key is Invalid"}, () => {})
         }
       }
 
@@ -84,14 +86,26 @@
         }
 
         codeChecker = code[0].charCodeAt(0) + code[1].charCodeAt(0) + code[2].charCodeAt(0) + code[3].charCodeAt(0) + code[4].charCodeAt(0) + code[5].charCodeAt(0) + code[6].charCodeAt(0) + code[7].charCodeAt(0) + code[8].charCodeAt(0) + code[9].charCodeAt(0) +code[10].charCodeAt(0) + code[11].charCodeAt(0)
-        console.log(codeChecker)
         if ((codeChecker % 2 == 0) && (codeChecker >= 500)){
             goodKey = 1;
         }
 
 
       }
-        alert ("Congrats your code is:  " + code);
+        //dialog.showMessageBox(null, options = {title: "Invalid Key", type: "info", message: "Congrats your code is:  " + code}, () => {})
+        prompt({
+            title: 'Enter Background Image Link',
+            label: 'Congrats! Your Product Key Is:',
+            value: code,
+            height: 150,
+            inputAttrs: {
+                type: 'url'
+            }
+        })
+        .then((r) => {
+            //
+        })
+        .catch(console.error);
         } 
     </script>
   </body>

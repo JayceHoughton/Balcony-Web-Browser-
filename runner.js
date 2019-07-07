@@ -9,6 +9,4 @@ backgroundFirst = fs.readFileSync('backgroundImage.json')
 let backgroundPic = JSON.parse(backgroundFirst)
 
 document.getElementById('body').style.backgroundImage = "url('" + backgroundPic + "')"
-ipcRenderer.on('logged', (event, arg) => {
-    panelView(0)
-})
+panelView(0)
