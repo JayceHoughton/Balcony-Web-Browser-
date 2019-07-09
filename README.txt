@@ -2,11 +2,12 @@ README for Balcony (Panel Based Web Browser):
 
 Thing you will need:
 1. You will need to have nodejs installed: https://nodejs.org/en/
-2. In the console in the directory of the project you may need to install the following packages:
+2. First simply try and run npm install in the console in the directory of the project
+2. If does not work for some reason instead in the console in the directory of the project you may need to install the following packages:
 npm install electron@beta
 npm install electron-prompt
 
-You may be able to just run npm install and it will install both of the above, but in case that doens't work properly, I would suggest running the two above commands just to be safe. Yes, we are using the electron beta version not 5.0. This is due to the fact that the ability to have multple BrowserViews was not implemented in 5.0, despite the ability to have multiple BrowserViews having been avaiable in the beta since December 2018.
+You should be able to just run npm install and it will install both of the above, but in case that doens't work properly, I would suggest running the two above commands just to be safe. Yes, we are using the electron beta version not 5.0. This is due to the fact that the ability to have multple BrowserViews was not implemented in 5.0, despite the ability to have multiple BrowserViews having been avaiable in the beta since December 2018.
 
 The Start the Program:
 In the terminal in the directory of the project where the main.js file is located, run:
