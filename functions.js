@@ -42,14 +42,17 @@ function setPanelNumber(num) {
     ipcRenderer.send('number', num)
 }
 
+//Function to build the web browser view
 function buildWebBrowser(x, y, width, height) {
     ipcRenderer.send('web', {x: x, y: y, width: width, height: height})
 }
 
+//Function to deal with resizing the web brower
 function resizeWebBrowser(x, y, width, height) {
     ipcRenderer.send('webresize', {x: x, y: y, width: width, height: height})
 }
 
+//Function to update the web browser contents
 function updateWebBrowser(url) {
     ipcRenderer.send('updateB', url)
 }

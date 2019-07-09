@@ -5,6 +5,7 @@ saveHistory = fs.readFileSync('savedHistory.json')
 let savedHistory = JSON.parse(saveHistory)
 
 buttonPos = 30
+//Makes a button for every thing in the history list that will navigate to that buttons url
 for (let i = 0; i < savedHistory.length; i++) {
     newHist = document.createElement('button')
     newHist.className = "historyButton"
@@ -22,6 +23,7 @@ for (let i = 0; i < savedHistory.length; i++) {
     buttonPos += 30
 }
 
+//Deletes all history
 deleteButton = document.createElement('button')
 deleteButton.className = "historyButton"
 deleteButton.style.position = "absolute"

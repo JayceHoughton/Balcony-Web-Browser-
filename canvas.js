@@ -20,6 +20,7 @@ canvas.height = window.innerHeight;
 defaultHeight = 800
 defaultWidth = 1500
 
+//Not currently used function, originally handled drawing a rectangle
 function drawBorder() {
     ctx.beginPath()
     ctx.rect(0, 0, canvas.width, canvas.height)
@@ -27,6 +28,8 @@ function drawBorder() {
     ctx.closePath()
 }
 
+//Function that launches the panel view and attaches all event listeners as well has checks which panel view we are in.
+//Removes all previous html elements and then draws page based on contetns in the panels array
 function panelView(input) {
     oldNodes = document.getElementById("ui")
     while(oldNodes.firstChild) {
@@ -53,6 +56,7 @@ function panelView(input) {
     setPanelNumber(input)
 }
 
+//Removes all event listeners and clears all contents from the page to prepare for the next page
 function clearView() {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     clearPanelView()
@@ -63,8 +67,6 @@ function clearView() {
     document.removeEventListener('mousedown', deletePanel)
     document.removeEventListener('mousedown', checkBox)
 }
-
-//drawBorder()
 
 //When we resize the window the canvas is cleared, so we need to redraw all panels
 window.onresize = function() {
@@ -215,6 +217,7 @@ function deleteRectangle(canvas, event, pos) {
     bottomBar(barNum)
 }
 
+//Handles all actions associated with the user drawing the rectangle after they have clicked on the screen
 function whileDrawing() {
 
     //Sets the leftcorner of the rectangle to the current mouse position

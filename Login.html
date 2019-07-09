@@ -35,6 +35,7 @@
       backgroundPic = JSON.parse(backgroundFirst)
       document.getElementById('body').style.backgroundImage = "url('" + backgroundPic + "')"
 
+      //Launches Guest mode if the user clicks the guest button
       function GuestMode(){ 
         console.log('Guest Button was clicked')
         var window = getRemote.getCurrentWindow();
@@ -42,6 +43,7 @@
       }
 
 
+      //Checks if the given product key matches with the product key format
       function regesterUser(){
         var x = document.getElementById("webst");
         var code = x.value;
@@ -61,6 +63,7 @@
       }
 
 
+      //Generates a product key
       function generateCode() {
         var min = 0;
         var max = 62;
@@ -103,7 +106,7 @@
             }
         })
         .then((r) => {
-            //
+            //Do nothing
         })
         .catch(console.error);
         } 

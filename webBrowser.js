@@ -27,8 +27,9 @@ function webBrowser() {
     webText()
 }
 
-//Functoin that handles the web top bar and input go button
+//Function that handles creating all HTML elements on the webbrowser tab
 function webText() {
+    //Input feild for web navigation
     webBox = document.createElement("INPUT")
     webBox.setAttribute("type", "text")
     webBox.id = "webBox"
@@ -42,6 +43,7 @@ function webText() {
     webBox.style.borderRadius = "25px"
     document.getElementById("ui").appendChild(webBox)
 
+    //Go button for above input feild
     webGo = document.createElement("button")
     webGo.style.position = "absolute"
     webGo.id = "webGo"
@@ -65,6 +67,7 @@ function webText() {
     })
     document.getElementById("ui").appendChild(webGo)
 
+    //Changes the top bar text feild on website navigation so it always displays the current address
     ipcRenderer.on('webpage', (event, arg) => {
         webBox.value = arg
         currentPage = arg
@@ -88,6 +91,8 @@ function webText() {
         }
     })
 
+    //Navigates backwards in temporary history. If a user goes backwards and then navigates to a new page
+    //the front of the list is chopped off and that page becomes the new front
     backButton = document.createElement("button")
     backButton.style.position = "absolute"
     backButton.id = "backButton"
@@ -106,6 +111,7 @@ function webText() {
     }
     document.getElementById("ui").appendChild(backButton)
 
+    //Navigates forward in temporary history
     forwardButton = document.createElement("button")
     forwardButton.style.position = "absolute"
     forwardButton.id = "forwardButton"
@@ -124,6 +130,7 @@ function webText() {
     }
     document.getElementById("ui").appendChild(forwardButton)
 
+    //Button that goes to the history page which lists all of the users persistent history
     historyButton = document.createElement("button")
     historyButton.style.position = "absolute"
     historyButton.id = "historyButton"
@@ -140,6 +147,7 @@ function webText() {
     }
     document.getElementById("ui").appendChild(historyButton)
 
+    //Button that displays the help page with some commonly asked questions
     helpButton = document.createElement("button")
     helpButton.style.position = "absolute"
     helpButton.id = "helpButton"
@@ -156,6 +164,7 @@ function webText() {
     }
     document.getElementById("ui").appendChild(helpButton)
 
+    //Button that allows the user to change the background image for personalization
     picButton = document.createElement("button")
     picButton.style.position = "absolute"
     picButton.id = "picButton"
@@ -189,6 +198,7 @@ function webText() {
     }
     document.getElementById("ui").appendChild(picButton)
 
+    //Button that allows the user to favorite their current page
     favoriteButton = document.createElement("button")
     favoriteButton = document.createElement("button")
     favoriteButton.style.position = "absolute"
@@ -208,6 +218,7 @@ function webText() {
     }
     document.getElementById("ui").appendChild(favoriteButton)
 
+    //Identical to history, but this one displays the list of persistent favorite pages
     favePageButton = document.createElement("button")
     favePageButton = document.createElement("button")
     favePageButton.style.position = "absolute"

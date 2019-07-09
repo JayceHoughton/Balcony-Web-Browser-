@@ -26,8 +26,10 @@ try {
 }
 let viewArr = []
 
+
+//Function that creates the main window on startup
 function createWindow() {
-  let loginSes = session.fromPartition('persist:part1')
+  //let loginSes = session.fromPartition('persist:part1')
   
   function  getCookies(){
     if (registeredUser1 == "True"){
@@ -53,30 +55,6 @@ function createWindow() {
   win.on('closed', () => {
     win = null
   })
-
-  /*if (getCookies()) {
-
-    loginWindow = new BrowserWindow({
-      width: 1500, height: 800,
-      webPreferences: {
-        nodeIntegration: true,
-        session: loginSes
-      },
-      parent: win,
-      resizable: false,
-      modal: true
-    })
-
-    loginWindow.loadFile('Login.html')
-    loginWindow.webContents.openDevTools()
-
-    loginWindow.on('closed', () => {
-      if (registeredUser.prop1) {
-        registrationCheck = "True"
-        fs.writeFile('premiumCheck.json', JSON.stringify(registrationCheck), 'utf-8', () => {win.webContents.send('logged') })
-      }
-    })
-  }*/
 }
 
 //Creates a BrowserView using infromation provided from renderer signal
@@ -86,8 +64,6 @@ function createBrowserView(x, y, width, height) {
   win.addBrowserView(view)
   view.setBounds({ x: x, y: y, width: width, height: height })
   savedViewData[panelNum].push({ x: x, y: y, width: width, height: height })
-  //view.setAutoResize({width: false, height: true})
-  //view.webContents.loadURL(url)
 }
 
 //Function to resize the passed Browser View
@@ -113,16 +89,19 @@ function deleteBrowserView(viewNum) {
   }
 }
 
+//Sets the Browser view contents to the specified URL
 function setBrowserView(url, viewNum) {
   viewArr[viewNum].webContents.loadURL(url)
   savedWebsites[panelNum].push({ url: url, viewNum: viewNum })
 }
 
+//Updates the browserview array for saving
 function updateBrowserView(url, viewNum) {
-  //viewArr[viewNum].webContents.loadURL(url)
   savedWebsites[panelNum][viewNum].url = url
 }
 
+
+//Destroys all views by using win.removeBrower view  and updates the saved pages.
 function destroyViews() {
   
   for(let i = 0; i < viewArr.length; i++)
@@ -137,6 +116,7 @@ function destroyViews() {
   fs.writeFile('savedWebpages.json', JSON.stringify(savedWebsites), 'utf-8', () => { })
 }
 
+//Restores all destroyed views in a given panelNum
 function restoreViews() {
   for (i = 0; i < savedViewData[panelNum].length; i++) {
     view = new BrowserView({ webPreferences: { plugins: true } })
@@ -147,6 +127,7 @@ function restoreViews() {
   }
 }
 
+//Sets the panel number so the program knows which tab the user is in
 function setPanelNum(num) {
   panelNum = num
   for (i = 0; i < savedViewData[panelNum].length; i++) {
@@ -159,6 +140,7 @@ function setPanelNum(num) {
   }
 }
 
+//Specific function to handle building the web browser instead of treating it like a panel view
 function buildBrowser(x, y, width, height) {
   view = new BrowserView({ webPreferences: { plugins: true, nodeIntegration: true } })
   viewArr.push(view)
@@ -174,21 +156,21 @@ function buildBrowser(x, y, width, height) {
     view.webContents.loadURL(savedWebsites[panelNum][0].url)
   }
   viewArr[0].webContents.on('did-navigate', function() {
-    //console.log(viewArr[0].webContents.getURL())
     win.webContents.send('webpage', viewArr[0].webContents.getURL())
   })
 
   viewArr[0].webContents.on('did-navigate-in-page', function() {
-    //console.log(viewArr[0].webContents.getURL())
     win.webContents.send('webpage', viewArr[0].webContents.getURL())
   })
 }
 
+//updates the top bar of the webbrowser
 function updateWebBrowser(url) {
   viewArr[0].webContents.loadURL(url)
   savedWebsites[panelNum][0].url = url
 }
 
+//Function to specifically deal with resizing the web browser on resize of the window
 function resizeWebBrowser(x, y, width, height) {
   viewArr[0].setBounds({ x: x, y: y, width: width, height: height })
 }
@@ -198,11 +180,11 @@ app.on('ready', createWindow)
 //Responds to the makeWindow signal from functions. Calls createBrowserView
 ipcMain.on('makeWindow', (event, arg) => {
   createBrowserView(arg.x, arg.y, arg.width, arg.height)
-  //event.reply('winPos', windowPos)
   event.returnValue = windowPos
   windowPos++
 })
 
+//Below is a series of functions that take signals from the functions.js file and uses them to call the above functions
 ipcMain.on('resize', (event, arg) => {
   resizeBrowserView(arg.x, arg.y, arg.width, arg.height, arg.viewNum)
 })
@@ -243,6 +225,7 @@ ipcMain.on('updateB', (event, arg) => {
   updateWebBrowser(arg)
 })
 
+//When the window is closed all cookies are deleted, all contents are saved syncronously to files, and the program is closed.
 app.on('window-all-closed', () => {
   for(let i = 0; i < viewArr.length; i++)
   {
