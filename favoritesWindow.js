@@ -1,7 +1,8 @@
 var fs = require('fs')
 
 faveFirst = fs.readFileSync('favorites.json')
-let savedFavorites = JSON.parse(faveFirst)
+let savedFavorites = []
+savedFavorites = JSON.parse(faveFirst)
 
 //Identical to the history window but instead uses the favorites array
 buttonPos = 30

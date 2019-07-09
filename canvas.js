@@ -4,7 +4,12 @@ var fs = require('fs')
 savedData = fs.readFileSync('saveData.json')
 premiumCheck = fs.readFileSync('premiumCheck.json')
 
-let panels = JSON.parse(savedData)
+let panels = [[],[],[],[],[],[],[]]
+try {
+panels = JSON.parse(savedData)
+} catch {
+    //
+}
 let isPremium = JSON.parse(premiumCheck)
 let whichPanel = 0
 

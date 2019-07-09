@@ -2,7 +2,8 @@
 var fs = require('fs')
 
 saveHistory = fs.readFileSync('savedHistory.json')
-let savedHistory = JSON.parse(saveHistory)
+let savedHistory = []
+savedHistory = JSON.parse(saveHistory)
 
 buttonPos = 30
 //Makes a button for every thing in the history list that will navigate to that buttons url

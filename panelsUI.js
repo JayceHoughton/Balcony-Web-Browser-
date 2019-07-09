@@ -2,7 +2,13 @@
 var fs = require('fs')
 
 premiumCheck = fs.readFileSync('premiumCheck.json')
-isPremium = JSON.parse(premiumCheck)
+isPremium = "False"
+try {
+    isPremium = JSON.parse(premiumCheck)
+    } catch {
+        isPremium = "False"
+        fs.writeFile('premiumCheck.json', JSON.stringify(isPremium), 'utf-8', () => {})
+}
 
 //Function that handles drawing the bottom bar. Takes an input which tells it which
 //part of the bottom bar to highlight, and also which bars to write premium on based on user level
