@@ -91,6 +91,10 @@ function webText() {
         }
     })
 
+    ipcRenderer.on('tab', (event, arg) => {
+        updateWebBrowser(arg)
+    })
+
     //Navigates backwards in temporary history. If a user goes backwards and then navigates to a new page
     //the front of the list is chopped off and that page becomes the new front
     backButton = document.createElement("button")

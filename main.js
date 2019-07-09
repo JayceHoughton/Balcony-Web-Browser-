@@ -162,6 +162,11 @@ function buildBrowser(x, y, width, height) {
   viewArr[0].webContents.on('did-navigate-in-page', function() {
     win.webContents.send('webpage', viewArr[0].webContents.getURL())
   })
+
+  viewArr[0].webContents.on('new-window', (event, url, frameName, disposition, options) => {
+    win.webContents.send('webpage', url)
+    win.webContents.send('tab', url)
+  })
 }
 
 //updates the top bar of the webbrowser
