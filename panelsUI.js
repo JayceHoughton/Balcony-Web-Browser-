@@ -4,6 +4,8 @@ var fs = require('fs')
 premiumCheck = fs.readFileSync('premiumCheck.json')
 isPremium = JSON.parse(premiumCheck)
 
+//Function that handles drawing the bottom bar. Takes an input which tells it which
+//part of the bottom bar to highlight, and also which bars to write premium on based on user level
 function bottomBar(input) {
     premiumCheck = fs.readFileSync('premiumCheck.json')
     isPremium = JSON.parse(premiumCheck)
@@ -46,6 +48,8 @@ function bottomBar(input) {
 }
 
 //Function for checking if the mouse is clicking one of the bottom bar buttons
+//Changes which panel view is being displayed, or if we are in the web browser view based on click
+//Makes panels 2-5 unclickable if the user is not a premium user
 function checkBox() {
     premiumCheck = fs.readFileSync('premiumCheck.json')
     isPremium = JSON.parse(premiumCheck)
